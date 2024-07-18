@@ -1,39 +1,56 @@
-<!-- 商品发布 - 其它设置 -->
+<!-- 套餐 -->
 <template>
   <el-form ref="formRef" :model="formData" :rules="rules" label-width="120px" :disabled="isDetail">
-    <el-form-item label="商品排序" prop="sort">
-      <el-input-number
-        v-model="formData.sort"
-        :min="0"
-        placeholder="请输入商品排序"
-        class="w-80!"
+    <el-form-item >
+      <PackageAttributes
+        :propFormData="propertyDate"
+        :is-detail="isDetail"
       />
-    </el-form-item>
-    <el-form-item label="赠送积分" prop="giveIntegral">
-      <el-input-number
-        v-model="formData.giveIntegral"
-        :min="0"
-        placeholder="请输入赠送积分"
-        class="w-80!"
-      />
-    </el-form-item>
-    <el-form-item label="虚拟销量" prop="virtualSalesCount">
-      <el-input-number
-        v-model="formData.virtualSalesCount"
-        :min="0"
-        placeholder="请输入虚拟销量"
-        class="w-80!"
-      />
+      <el-button color="#626aef" plain class="mb-10px mr-15px" @click="addSku">添加套餐</el-button>
     </el-form-item>
   </el-form>
 </template>
 <script lang="ts" setup>
-import type { Spu } from '@/api/mall/product/spu'
 import { PropType } from 'vue'
-import { propTypes } from '@/utils/propTypes'
 import { copyValueToTarget } from '@/utils'
+import { propTypes } from '@/utils/propTypes'
+import {
+  getPropertyList,
+  PropertyAndValues,
+  RuleConfig,
+  SkuList
+} from '@/views/mall/product/spu/components/index'
+import PackageAttributes from './PackageAttributes.vue'
+import type { Spu } from '@/api/mall/product/spu'
+import { DICT_TYPE,getIntDictOptions, getStrDictOptions } from '@/utils/dict'
+let countryList = getIntDictOptions(DICT_TYPE.COUNTRY_TYPE)
+console.log('tetst',countryList);
 
-defineOptions({ name: 'ProductOtherForm' })
+defineOptions({ name: 'ProductSpuSkuForm' })
+
+// sku 相关属性校验规则
+const ruleConfig: RuleConfig[] = [
+  {
+    name: 'stock',
+    rule: (arg) => arg >= 0,
+    message: '商品库存必须大于等于 1 ！！！'
+  },
+  {
+    name: 'price',
+    rule: (arg) => arg >= 0.01,
+    message: '商品销售价格必须大于等于 0.01 元！！！'
+  },
+  {
+    name: 'marketPrice',
+    rule: (arg) => arg >= 0.01,
+    message: '商品市场价格必须大于等于 0.01 元！！！'
+  },
+  {
+    name: 'costPrice',
+    rule: (arg) => arg >= 0.01,
+    message: '商品成本价格必须大于等于 0.00 元！！！'
+  }
+]
 
 const message = useMessage() // 消息弹窗
 
@@ -44,19 +61,16 @@ const props = defineProps({
   },
   isDetail: propTypes.bool.def(false) // 是否作为详情组件
 })
-
-const formRef = ref() // 表单Ref
-// 表单数据
-const formData = ref<Spu>({
-  sort: 0, // 商品排序
-  giveIntegral: 0, // 赠送积分
-  virtualSalesCount: 0 // 虚拟销量
+const attributesAddFormRef = ref() // 添加商品属性表单
+const formRef = ref() // 表单 Ref
+const propertyDate = ref({}) // 
+const skuListRef = ref() // 商品属性列表 Ref
+const formData = reactive({
+  thalis:[],//套餐
 })
-// 表单规则
 const rules = reactive({
-  sort: [required],
-  giveIntegral: [required],
-  virtualSalesCount: [required]
+  specType: [required],
+  // subCommissionType: [required]
 })
 
 /** 将传进来的值赋值给 formData */
@@ -66,7 +80,10 @@ watch(
     if (!data) {
       return
     }
-    copyValueToTarget(formData.value, data)
+    copyValueToTarget(formData, data)
+    console.log('formDataformDataformData',formData);
+    
+    propertyDate.value = data
   },
   {
     immediate: true
@@ -78,14 +95,70 @@ const emit = defineEmits(['update:activeName'])
 const validate = async () => {
   if (!formRef) return
   try {
-    await unref(formRef)?.validate()
+    // 校验 sku
+    skuListRef.value.validateSku()
+    await unref(formRef).validate()
     // 校验通过更新数据
-    Object.assign(props.propFormData, formData.value)
+    Object.assign(props.propFormData, formData)
   } catch (e) {
-    message.error('【其它设置】不完善，请填写相关信息')
-    emit('update:activeName', 'other')
+    message.error('【库存价格】不完善，请填写相关信息')
+    emit('update:activeName', 'sku')
     throw e // 目的截断之后的校验
   }
 }
 defineExpose({ validate })
+
+/** 分销类型 */
+const changeSubCommissionType = () => {
+  // 默认为零，类型切换后也要重置为零
+  for (const item of formData.skus!) {
+    item.firstBrokeragePrice = 0
+    item.secondBrokeragePrice = 0
+  }
+}
+
+/** 选择规格 */
+const onChangeSpec = () => {
+  // 重置商品属性列表
+  propertyList.value = []
+  // 重置sku列表
+  formData.skus = [
+    {
+      price: 0,
+      marketPrice: 0,
+      costPrice: 0,
+      barCode: '',
+      picUrl: '',
+      stock: 0,
+      weight: 0,
+      volume: 0,
+      firstBrokeragePrice: 0,
+      secondBrokeragePrice: 0
+    }
+  ]
+}
+
+// 添加属性
+const addSku=()=>{
+  const obj = {
+    isMaster:0,
+    isAlone:0,
+    num:1,
+    name:'',
+    properties: []
+    }
+    countryList.forEach(e=>{
+      obj.properties.push({
+        name:e.label,
+        nameUs:'',
+        nameArab:'',
+        price:0,
+        discountPrice:''
+      })
+    })
+  propertyDate.value.thalis.push(obj)
+    console.log(propertyDate.value);
+    
+}
+
 </script>

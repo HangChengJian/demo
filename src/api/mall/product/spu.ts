@@ -107,3 +107,13 @@ export const exportSpu = async (params) => {
 export const getSpuSimpleList = async () => {
   return request.get({ url: '/product/spu/list-all-simple' })
 }
+
+// 获得业务员
+export const getSimple = async () => {
+  return request.get({ url: '/system/user/list-all-simple' })
+}
+
+// 复制商品
+export const cloneGoods = async (data) => {
+  return request.post({ url: '/product/spu/copy',data })
+}

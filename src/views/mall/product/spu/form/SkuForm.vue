@@ -1,7 +1,7 @@
 <!-- 商品发布 - 库存价格 -->
 <template>
   <el-form ref="formRef" :model="formData" :rules="rules" label-width="120px" :disabled="isDetail">
-    <el-form-item label="分销类型" props="subCommissionType">
+    <!-- <el-form-item label="分销类型" props="subCommissionType">
       <el-radio-group
         v-model="formData.subCommissionType"
         @change="changeSubCommissionType"
@@ -10,35 +10,38 @@
         <el-radio :label="false">默认设置</el-radio>
         <el-radio :label="true" class="radio">单独设置</el-radio>
       </el-radio-group>
-    </el-form-item>
-    <el-form-item label="商品规格" props="specType">
+    </el-form-item> -->
+    <!-- <el-form-item label="商品规格" props="specType">
       <el-radio-group v-model="formData.specType" @change="onChangeSpec" class="w-80">
         <el-radio :label="false" class="radio">单规格</el-radio>
         <el-radio :label="true">多规格</el-radio>
       </el-radio-group>
-    </el-form-item>
+    </el-form-item> -->
     <!-- 多规格添加-->
-    <el-form-item v-if="!formData.specType">
+    <!-- <el-form-item v-if="!formData.specType">
       <SkuList
         ref="skuListRef"
         :prop-form-data="formData"
         :property-list="propertyList"
         :rule-config="ruleConfig"
       />
-    </el-form-item>
+    </el-form-item> -->
     <el-form-item v-if="formData.specType" label="商品属性">
-      <el-button class="mb-10px mr-15px" @click="attributesAddFormRef.open">添加属性</el-button>
       <ProductAttributes
         :property-list="propertyList"
         @success="generateSkus"
+        @update='updateSkus'
         :is-detail="isDetail"
       />
+      <el-button color="#626aef" plain class="mb-10px mr-15px" @click="addSku">添加属性</el-button>
+
+
     </el-form-item>
     <template v-if="formData.specType && propertyList.length > 0">
-      <el-form-item label="批量设置" v-if="!isDetail">
+      <!-- <el-form-item label="批量设置" v-if="!isDetail">
         <SkuList :is-batch="true" :prop-form-data="formData" :property-list="propertyList" />
-      </el-form-item>
-      <el-form-item label="规格列表">
+      </el-form-item> -->
+      <el-form-item label="" v-show="false">
         <SkuList
           ref="skuListRef"
           :prop-form-data="formData"
@@ -66,6 +69,7 @@ import {
 import ProductAttributes from './ProductAttributes.vue'
 import ProductPropertyAddForm from './ProductPropertyAddForm.vue'
 import type { Spu } from '@/api/mall/product/spu'
+import { log } from 'console'
 
 defineOptions({ name: 'ProductSpuSkuForm' })
 
@@ -106,14 +110,14 @@ const attributesAddFormRef = ref() // 添加商品属性表单
 const formRef = ref() // 表单 Ref
 const propertyList = ref<PropertyAndValues[]>([]) // 商品属性列表
 const skuListRef = ref() // 商品属性列表 Ref
-const formData = reactive<Spu>({
-  specType: false, // 商品规格
-  subCommissionType: false, // 分销类型
+const formData = reactive({
+  specType: true, // 商品规格
+  // subCommissionType: false, // 分销类型
   skus: []
 })
 const rules = reactive({
   specType: [required],
-  subCommissionType: [required]
+  // subCommissionType: [required]
 })
 
 /** 将传进来的值赋值给 formData */
@@ -126,6 +130,8 @@ watch(
     copyValueToTarget(formData, data)
     // 将 SKU 的属性，整理成 PropertyAndValues 数组
     propertyList.value = getPropertyList(data)
+    console.log('谷歌11111111',propertyList.value);
+    
   },
   {
     immediate: true
@@ -135,11 +141,17 @@ watch(
 /** 表单校验 */
 const emit = defineEmits(['update:activeName'])
 const validate = async () => {
-  if (!formRef) return
+  // console.log('谷歌12222',propertyList.value);
+
+  // Object.assign(props.propFormData, {skus:propertyList.value})
+  // // console.log('formData',formData);
+  
+  // return true
+  // if (!formRef) return
   try {
     // 校验 sku
-    skuListRef.value.validateSku()
-    await unref(formRef).validate()
+    // skuListRef.value.validateSku()
+    // await unref(formRef).validate()
     // 校验通过更新数据
     Object.assign(props.propFormData, formData)
   } catch (e) {
@@ -180,8 +192,29 @@ const onChangeSpec = () => {
   ]
 }
 
+// 添加属性
+const addSku=()=>{
+  console.log('attributesAddFormRef',attributesAddFormRef);
+  
+  attributesAddFormRef.value.open()
+//  // 添加到属性列表
+//  propertyList.value.push({
+//       id: 99,
+//       name:'',
+//       values: []
+//     })
+}
 /** 调用 SkuList generateTableData 方法*/
 const generateSkus = (propertyList) => {
-  skuListRef.value.generateTableData(propertyList)
+  console.log('propertyListpropertyListpropertyListpropertyList',propertyList);
+  
+  skuListRef.value.generateTableData(propertyList,false)
 }
+/** 调用 SkuList generateTableData 方法*/
+const updateSkus = (propertyList) => {
+  console.log('propertyListpropertyListpropertyListpropertyList',propertyList);
+  
+  skuListRef.value.generateTableData(propertyList,true)
+}
+
 </script>

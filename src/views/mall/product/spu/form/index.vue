@@ -9,22 +9,15 @@
           :propFormData="formData"
         />
       </el-tab-pane>
-      <el-tab-pane label="价格库存" name="sku">
-        <SkuForm
-          ref="skuRef"
-          v-model:activeName="activeName"
-          :is-detail="isDetail"
-          :propFormData="formData"
-        />
-      </el-tab-pane>
-      <el-tab-pane label="物流设置" name="delivery">
+    
+      <!-- <el-tab-pane label="物流设置" name="delivery">
         <DeliveryForm
           ref="deliveryRef"
           v-model:activeName="activeName"
           :is-detail="isDetail"
           :propFormData="formData"
         />
-      </el-tab-pane>
+      </el-tab-pane> -->
       <el-tab-pane label="商品详情" name="description">
         <DescriptionForm
           ref="descriptionRef"
@@ -33,7 +26,15 @@
           :propFormData="formData"
         />
       </el-tab-pane>
-      <el-tab-pane label="其它设置" name="other">
+      <el-tab-pane label="属性规格" name="sku">
+        <SkuForm
+          ref="skuRef"
+          v-model:activeName="activeName"
+          :is-detail="isDetail"
+          :propFormData="formData"
+        />
+      </el-tab-pane>
+      <el-tab-pane label="套餐设置" name="other">
         <OtherForm
           ref="otherRef"
           v-model:activeName="activeName"
@@ -62,6 +63,7 @@ import OtherForm from './OtherForm.vue'
 import SkuForm from './SkuForm.vue'
 import DeliveryForm from './DeliveryForm.vue'
 import { convertToInteger, floatToFixed2, formatToFraction } from '@/utils'
+import { log } from 'console'
 
 defineOptions({ name: 'ProductSpuForm' })
 
@@ -80,18 +82,29 @@ const deliveryRef = ref() // 物流设置 Ref
 const descriptionRef = ref() // 商品详情 Ref
 const otherRef = ref() // 其他设置 Ref
 // SPU 表单数据
-const formData = ref<ProductSpuApi.Spu>({
-  name: '', // 商品名称
+const formData = ref({
+  salesman:'',//业务员
+  name: '', // 商品名称中文
+  nameUs:'',//商品名称英文
+  nameArab:'',//商品名称阿语
+  introduction:'',//副标题中文
+  introductionUs:'',//副标题英文
+  introductionArab:'',//副标题阿语
+  virtualSalesCount:0,//虚拟销量
   categoryId: undefined, // 商品分类
-  keyword: '', // 关键字
+  procureUrls:[],//采购链接
+  // keyword: '', // 关键字
   picUrl: '', // 商品封面图
   sliderPicUrls: [], // 商品轮播图
-  introduction: '', // 商品简介
-  deliveryTypes: [], // 配送方式数组
-  deliveryTemplateId: undefined, // 运费模版
-  brandId: undefined, // 商品品牌
-  specType: false, // 商品规格
-  subCommissionType: false, // 分销类型
+  whatsapp:'',
+  marketingUrl:'',//活动图
+  weight:'',//重量
+  procurePrice:0,//采购价
+  // deliveryTypes: [], // 配送方式数组
+  // deliveryTemplateId: undefined, // 运费模版
+  // brandId: undefined, // 商品品牌
+  specType: true, // 商品规格
+  // subCommissionType: false, // 分销类型
   skus: [
     {
       price: 0, // 商品价格
@@ -107,9 +120,9 @@ const formData = ref<ProductSpuApi.Spu>({
     }
   ],
   description: '', // 商品详情
-  sort: 0, // 商品排序
-  giveIntegral: 0, // 赠送积分
-  virtualSalesCount: 0 // 虚拟销量
+  thalis:[],//套餐
+  sort: 1, // 投放渠道
+  // giveIntegral: 0, // 赠送积分
 })
 
 /** 获得详情 */
@@ -119,26 +132,37 @@ const getDetail = async () => {
   }
   const id = params.id as unknown as number
   if (id) {
-    formLoading.value = true
+    // formLoading.value = true
     try {
-      const res = (await ProductSpuApi.getSpu(id)) as ProductSpuApi.Spu
-      res.skus?.forEach((item) => {
-        if (isDetail.value) {
-          item.price = floatToFixed2(item.price)
-          item.marketPrice = floatToFixed2(item.marketPrice)
-          item.costPrice = floatToFixed2(item.costPrice)
-          item.firstBrokeragePrice = floatToFixed2(item.firstBrokeragePrice)
-          item.secondBrokeragePrice = floatToFixed2(item.secondBrokeragePrice)
-        } else {
-          // 回显价格分转元
-          item.price = formatToFraction(item.price)
-          item.marketPrice = formatToFraction(item.marketPrice)
-          item.costPrice = formatToFraction(item.costPrice)
-          item.firstBrokeragePrice = formatToFraction(item.firstBrokeragePrice)
-          item.secondBrokeragePrice = formatToFraction(item.secondBrokeragePrice)
-        }
+      const res = await ProductSpuApi.getSpu(id)
+      res.salesman =  parseInt(res.salesman)
+        res.thalis?.forEach((item) => {
+          item.id = ''
+          item.properties.forEach(e=>{
+            e.thaliId = ''
+          })
       })
+      // res.skus?.forEach((item) => {
+      //   if (isDetail.value) {
+      //     item.price = floatToFixed2(item.price)
+      //     item.marketPrice = floatToFixed2(item.marketPrice)
+      //     item.costPrice = floatToFixed2(item.costPrice)
+      //     item.firstBrokeragePrice = floatToFixed2(item.firstBrokeragePrice)
+      //     item.secondBrokeragePrice = floatToFixed2(item.secondBrokeragePrice)
+      //   } else {
+      //     // 回显价格分转元
+      //     item.price = formatToFraction(item.price)
+      //     item.marketPrice = formatToFraction(item.marketPrice)
+      //     item.costPrice = formatToFraction(item.costPrice)
+      //     item.firstBrokeragePrice = formatToFraction(item.firstBrokeragePrice)
+      //     item.secondBrokeragePrice = formatToFraction(item.secondBrokeragePrice)
+      //   }
+      // })
+      formLoading.value = false
+
       formData.value = res
+      console.log('编辑的数据',formData.value);
+      
     } finally {
       formLoading.value = false
     }
@@ -151,22 +175,31 @@ const submitForm = async () => {
   formLoading.value = true
   try {
     // 校验各表单
+    // await unref(infoRef)?.validate()
+    // await unref(descriptionRef)?.validate()
+  //   await unref(skuRef)?.validate()
+    
+  // console.log(formData.value);
+
     await unref(infoRef)?.validate()
     await unref(skuRef)?.validate()
-    await unref(deliveryRef)?.validate()
     await unref(descriptionRef)?.validate()
-    await unref(otherRef)?.validate()
+    console.log(formData.value);
+
+
+    // await unref(deliveryRef)?.validate()
+    // await unref(otherRef)?.validate()
     // 深拷贝一份, 这样最终 server 端不满足，不需要影响原始数据
     const deepCopyFormData = cloneDeep(unref(formData.value)) as ProductSpuApi.Spu
     deepCopyFormData.skus!.forEach((item) => {
       // 给sku name赋值
       item.name = deepCopyFormData.name
       // sku相关价格元转分
-      item.price = convertToInteger(item.price)
-      item.marketPrice = convertToInteger(item.marketPrice)
-      item.costPrice = convertToInteger(item.costPrice)
-      item.firstBrokeragePrice = convertToInteger(item.firstBrokeragePrice)
-      item.secondBrokeragePrice = convertToInteger(item.secondBrokeragePrice)
+      // item.price = convertToInteger(item.price)
+      // item.marketPrice = convertToInteger(item.marketPrice)
+      // item.costPrice = convertToInteger(item.costPrice)
+      // item.firstBrokeragePrice = convertToInteger(item.firstBrokeragePrice)
+      // item.secondBrokeragePrice = convertToInteger(item.secondBrokeragePrice)
     })
     // 处理轮播图列表
     const newSliderPicUrls: any[] = []
@@ -196,6 +229,7 @@ const close = () => {
   delView(unref(currentRoute))
   push({ name: 'ProductSpu' })
 }
+
 
 /** 初始化 */
 onMounted(async () => {

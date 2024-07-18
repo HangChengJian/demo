@@ -9,7 +9,7 @@
       :inline="true"
       :model="queryParams"
       class="-mb-15px"
-      label-width="68px"
+      label-width="98px"
     >
       <el-form-item label="商品名称" prop="name">
         <el-input
@@ -17,6 +17,46 @@
           class="!w-240px"
           clearable
           placeholder="请输入商品名称"
+          @keyup.enter="handleQuery"
+        />
+      </el-form-item>
+      <el-form-item label="商品ID" prop="pageId">
+        <el-input
+          v-model="queryParams.pageId"
+          class="!w-240px"
+          clearable
+          placeholder="请输入商品ID"
+          @keyup.enter="handleQuery"
+        />
+      </el-form-item>
+      <el-form-item label="创建者" prop="salesman">
+        <el-cascader
+        v-model="queryParams.salesman"
+        :options="userList"
+        :props="userProps"
+        class="w-1/1"
+          clearable
+          filterable
+          placeholder="请选择创建者"
+      />
+      </el-form-item>
+      <!-- <el-form-item label="地区" prop="categoryId">
+        <el-cascader
+          v-model="queryParams.categoryId"
+          :options="categoryList"
+          :props="defaultProps"
+          class="w-1/1"
+          clearable
+          filterable
+          placeholder="请选择地区"
+        />
+      </el-form-item> -->
+      <el-form-item label="推广链接" prop="promotionUrl">
+        <el-input
+          v-model="queryParams.promotionUrl"
+          class="!w-240px"
+          clearable
+          placeholder="请输入推广链接"
           @keyup.enter="handleQuery"
         />
       </el-form-item>
@@ -31,7 +71,16 @@
           placeholder="请选择商品分类"
         />
       </el-form-item>
-      <el-form-item label="创建时间" prop="createTime">
+      <el-form-item label="内部编码" prop="id">
+        <el-input
+          v-model="queryParams.id"
+          class="!w-240px"
+          clearable
+          placeholder="请输入内部编码"
+          @keyup.enter="handleQuery"
+        />
+      </el-form-item>
+      <!-- <el-form-item label="创建时间" prop="createTime">
         <el-date-picker
           v-model="queryParams.createTime"
           :default-time="[new Date('1 00:00:00'), new Date('1 23:59:59')]"
@@ -41,7 +90,7 @@
           type="daterange"
           value-format="YYYY-MM-DD HH:mm:ss"
         />
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item>
         <el-button @click="handleQuery">
           <Icon class="mr-5px" icon="ep:search" />
@@ -91,25 +140,48 @@
             <el-row>
               <el-col :span="24">
                 <el-row>
-                  <el-col :span="8">
-                    <el-form-item label="商品分类:">
-                      <span>{{ formatCategoryName(row.categoryId) }}</span>
+                  <el-col :span="2">
+                    <el-form-item label="内部编码:">
+                      <div class="fx-ct pointer color-88" @click="copy(row.id)" v-if="row.id">
+                        {{ row.id }}
+                        <Icon icon="svg-icon:copy" class="ml-4px" :size="18" />
+                        </div>
                     </el-form-item>
                   </el-col>
-                  <el-col :span="8">
-                    <el-form-item label="市场价:">
-                      <span>{{ fenToYuan(row.marketPrice) }}</span>
+                  <el-col :span="6">
+                    <el-form-item label="推广链接:">
+                      <div class="pointer color-88" @click="copy(row.promotionUrl)" v-if="row.promotionUrl">
+                        {{ row.promotionUrl || '无'}}
+                        <span  style="position: relative;top: 2px">
+                          <Icon icon="svg-icon:copy" class="ml-4px color-88" :size="18" />
+                        </span>
+                        </div>
                     </el-form-item>
                   </el-col>
-                  <el-col :span="8">
-                    <el-form-item label="成本价:">
-                      <span>{{ fenToYuan(row.costPrice) }}</span>
+                  <el-col :span="4">
+                    <el-form-item label="whatsapp:">
+                      <div class="pointer color-88" @click="copy(row.whatsapp)" >
+                        {{ row.whatsapp || '无'}}
+                        <span  style="position: relative;top: 2px">
+                          <Icon icon="svg-icon:copy" class="ml-4px color-88" :size="18" />
+                        </span>
+                        </div>
+                    </el-form-item>
+                  </el-col>
+                  <el-col :span="4">
+                    <el-form-item label="创建时间:">
+                      <span>{{ formatDate(row.createTime) }}</span>
+                    </el-form-item>
+                  </el-col>
+                  <el-col :span="4">
+                    <el-form-item label="修改时间:">
+                      <span>{{ formatDate(row.updateTime) }}</span>
                     </el-form-item>
                   </el-col>
                 </el-row>
               </el-col>
             </el-row>
-            <el-row>
+            <!-- <el-row>
               <el-col :span="24">
                 <el-row>
                   <el-col :span="8">
@@ -124,11 +196,18 @@
                   </el-col>
                 </el-row>
               </el-col>
-            </el-row>
+            </el-row> -->
           </el-form>
         </template>
       </el-table-column>
-      <el-table-column label="商品编号" min-width="140" prop="id" />
+      <el-table-column label="商品ID" min-width="140" prop="id" >
+      <template #default="{ row }">
+          <div class="flex pointer color-88" @click="copy(row.pageId)">
+           {{ row.pageId }}
+           <Icon icon="svg-icon:copy" class="ml-4px" :size="20" />
+          </div>
+        </template>
+      </el-table-column>
       <el-table-column label="商品信息" min-width="300">
         <template #default="{ row }">
           <div class="flex">
@@ -148,13 +227,45 @@
           </div>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="价格" min-width="160" prop="price">
-        <template #default="{ row }"> ¥ {{ fenToYuan(row.price) }}</template>
+      <el-table-column label="活动封面" min-width="100">
+        <template #default="{ row }">
+            <el-image
+              fit="cover"
+              :src="row.picUrl"
+              class="flex-none w-50px h-50px"
+              @click="imagePreview(row.marketingUrl)"
+              v-if='row.marketingUrl'
+            />
+            <span v-else>无</span>
+        </template>
       </el-table-column>
-      <el-table-column align="center" label="销量" min-width="90" prop="salesCount" />
-      <el-table-column align="center" label="库存" min-width="90" prop="stock" />
-      <el-table-column align="center" label="排序" min-width="70" prop="sort" />
-      <el-table-column align="center" label="销售状态" min-width="80">
+      <el-table-column align="center" label="商品分类" min-width="160" prop="price">
+        <template #default="{ row }">{{ formatCategoryName(row.categoryId) }}</template>
+      </el-table-column>
+      <el-table-column align="center" label="价格" min-width="160" prop="price">
+        <template #default="{ row }">
+          <div>原价 {{ row.priceAs }}</div>
+          <div>折扣价 {{ row.discountPriceAs }}</div>
+          </template>
+      </el-table-column>
+      <el-table-column align="center" label="采购价" min-width="90" prop="salesman" >
+        <template #default="{ row }">
+          {{ row.procurePrice }}
+          </template>
+      </el-table-column>
+      <el-table-column align="center" label="重量" min-width="90" prop="salesman" >
+        <template #default="{ row }">
+          {{ row.weight }}g
+          </template>
+      </el-table-column>
+      <el-table-column align="center" label="创建者" min-width="90" prop="salesman" >
+        <template #default="{ row }">
+          {{ salesmanName(row.salesman) }}
+          </template>
+      </el-table-column>
+      <!-- <el-table-column align="center" label="库存" min-width="90" prop="stock" />
+      <el-table-column align="center" label="排序" min-width="70" prop="sort" /> -->
+      <!-- <el-table-column align="center" label="销售状态" min-width="80">
         <template #default="{ row }">
           <template v-if="row.status >= 0">
             <el-switch
@@ -171,17 +282,18 @@
             <el-tag type="info">回收站</el-tag>
           </template>
         </template>
-      </el-table-column>
-      <el-table-column
+      </el-table-column> -->
+      <!-- <el-table-column
         :formatter="dateFormatter"
         align="center"
         label="创建时间"
         prop="createTime"
         width="180"
-      />
+      /> -->
       <el-table-column align="center" fixed="right" label="操作" min-width="200">
         <template #default="{ row }">
-          <el-button link type="primary" @click="openDetail(row.id)"> 详情 </el-button>
+          <!-- <el-button link type="primary" @click="openDetail(row.id)"> 详情 </el-button> -->
+          <el-button link type="primary" @click="handleClone(row.id)"> 复制 </el-button>
           <el-button
             v-hasPermi="['product:spu:update']"
             link
@@ -229,20 +341,25 @@
       @pagination="getList"
     />
   </ContentWrap>
+    <!-- 复制弹窗 -->
+  <CloneForm ref="cloneFormRef" @success="getList" :list='userList'/>
 </template>
 <script lang="ts" setup>
 import { TabsPaneContext } from 'element-plus'
 import { createImageViewer } from '@/components/ImageViewer'
-import { dateFormatter } from '@/utils/formatTime'
 import { defaultProps, handleTree, treeToString } from '@/utils/tree'
 import { ProductSpuStatusEnum } from '@/utils/constants'
 import { fenToYuan } from '@/utils'
+import { DICT_TYPE,getIntDictOptions, getStrDictOptions } from '@/utils/dict'
 import download from '@/utils/download'
+import { useClipboard } from '@vueuse/core'
+import { formatDate } from '@/utils/formatTime'
+import CloneForm from './components/CloneForm.vue'
+
 import * as ProductSpuApi from '@/api/mall/product/spu'
 import * as ProductCategoryApi from '@/api/mall/product/category'
 
 defineOptions({ name: 'ProductSpu' })
-
 const message = useMessage() // 消息弹窗
 const { t } = useI18n() // 国际化
 const { push } = useRouter() // 路由跳转
@@ -251,26 +368,27 @@ const loading = ref(false) // 列表的加载中
 const exportLoading = ref(false) // 导出的加载中
 const total = ref(0) // 列表的总页数
 const list = ref<ProductSpuApi.Spu[]>([]) // 列表的数据
+const userList = ref([])
+const userProps = {
+  children: 'children',
+  label: 'nickname',
+  value: 'id',
+  isLeaf: 'leaf',
+  emitPath: false // 用于 cascader 组件：在选中节点改变时，是否返回由该节点所在的各级菜单的值所组成的数组，若设置 false，则只返回该节点的值
+}
+// 获取业务员
+ProductSpuApi.getSimple().then(res=>{
+  userList.value = res
+})
+const salesmanName = (id)=>{
+  let name = userList.value.filter(e => e.id == id )[0].nickname
+  return name
+}
 // tabs 数据
 const tabsData = ref([
   {
     name: '出售中',
     type: 0,
-    count: 0
-  },
-  {
-    name: '仓库中',
-    type: 1,
-    count: 0
-  },
-  {
-    name: '已售罄',
-    type: 2,
-    count: 0
-  },
-  {
-    name: '警戒库存',
-    type: 3,
     count: 0
   },
   {
@@ -285,8 +403,11 @@ const queryParams = ref({
   pageSize: 10,
   tabType: 0,
   name: '',
+  pageId:'',
   categoryId: undefined,
-  createTime: undefined
+  salesman:'',
+  promotionUrl:'',
+  id:'',
 }) // 查询参数
 const queryFormRef = ref() // 搜索的表单Ref
 
@@ -301,7 +422,11 @@ const getList = async () => {
     loading.value = false
   }
 }
-
+/** 复制按钮操作 **/
+const cloneFormRef = ref()
+const handleClone = (id: number) => {
+  cloneFormRef.value.open(id)
+}
 /** 切换 Tab */
 const handleTabClick = (tab: TabsPaneContext) => {
   queryParams.value.tabType = tab.paneName as number
@@ -311,9 +436,12 @@ const handleTabClick = (tab: TabsPaneContext) => {
 /** 获得每个 Tab 的数量 */
 const getTabsCount = async () => {
   const res = await ProductSpuApi.getTabsCount()
-  for (let objName in res) {
-    tabsData.value[Number(objName)].count = res[objName]
-  }
+  tabsData.value[0].count = res[0]
+  tabsData.value[1].count = res[4]
+
+  // for (let objName in res) {
+  //   tabsData.value[Number(objName)].count = res[objName]
+  // }
 }
 
 /** 添加到仓库 / 回收站的状态 */
@@ -437,6 +565,21 @@ onMounted(async () => {
   const data = await ProductCategoryApi.getCategoryList({})
   categoryList.value = handleTree(data, 'id', 'parentId')
 })
+
+/** 复制 **/
+const copy = async (text: string) => {
+  const { copy, copied, isSupported } = useClipboard({ source: text })
+  if (!isSupported) {
+    message.error(t('common.copyError'))
+    return
+  }
+  console.log(copy);
+  
+  await copy()
+  if (unref(copied)) {
+    message.success(t('common.copySuccess'))
+  }
+}
 </script>
 <style lang="scss" scoped>
 .spu-table-expand {

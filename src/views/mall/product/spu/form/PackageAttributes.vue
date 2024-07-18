@@ -1,6 +1,7 @@
 <!-- 商品发布 - 库存价格 - 属性列表 -->
 <template>
-  <el-col v-for="(item, index) in attributeList" :key="index">
+  <!-- attributeList -->
+  <el-col v-for="(item, index) in formData.thalis" :key="index">
     <!-- ref="formRef"
       v-loading="formLoading"
       :model="formData"
@@ -8,51 +9,69 @@
       label-width="110px" -->
     <el-form
       ref="formRef"
-      label-width="160px"
+      label-width="140px"
     >
    <el-row>
       <el-col :span="6">
-          <el-form-item label="属性名称(中文)" prop="title" style="font-weight: 600;">
-            <el-input v-model="item.name" placeholder="请输入属性名称" @input="updateDate"/>
+          <el-form-item label="套餐名称" prop="title" >
+            <el-input v-model="item.name" placeholder="请输入套餐名称" />
           </el-form-item>
         </el-col>
-        <el-col :span="6">
-          <el-form-item label="属性名称(英文)" prop="categoryId"  style="font-weight: 600;">
-            <el-input v-model="item.nameUs" placeholder="请输入属性名称" @input="updateDate"/>
+        <el-col :span="4">
+          <el-form-item label="套餐商品数量" prop="categoryId"  >
+            <el-input-number v-model="item.num" :min="1" :max="99999"  />
           </el-form-item>
         </el-col>
-        <el-col :span="6">
-          <el-form-item label="属性名称(阿语)" prop="categoryId"  style="font-weight: 600;">
-            <el-input v-model="item.nameArab" placeholder="请输入属性名称" @input="updateDate"/>
+        <el-col :span="2">
+          <el-form-item label="是否独立SKU" prop="categoryId"  >
+            <el-switch
+            v-model="item.isAlone"
+            :active-value="1"
+            :inactive-value="0"
+            @change="handleSkuChange(item)"
+          />
+          </el-form-item>
+        </el-col>
+        <el-col :span="2">
+          <el-form-item label="是否为主套餐" prop="categoryId"  >
+            <el-switch
+            v-model="item.isMaster"
+            :active-value="1"
+            :inactive-value="0"
+            @change="handleStatusChange(item,index)"
+          />
           </el-form-item>
         </el-col>
         <el-button color="red" class="ml-10"  plain  @click="handleCloseProperty(index)">删除</el-button>
     </el-row>
-    <!-- 规格 -->
-    <el-row class="mt-8" v-for="(value, valueIndex) in item.values" :key="value.id">
-      <el-col :span="6">
-          <el-form-item label="规格名称(中文)" prop="title">
-            <el-input v-model="value.name" placeholder="请输入规格名称" @input="updateDate"/>
+    <!-- 国家套餐 -->
+    <el-row class="mt-8" v-for="(items,indexs) in item.properties" :key="indexs">
+      <el-col :span="2">
+          <el-form-item :label="items.name" prop="title" style="font-weight: 600;"/>
+        </el-col>
+        <el-col :span="6">
+          <el-form-item label="套餐名称(英文)" prop="categoryId">
+            <el-input v-model="items.nameUs" placeholder="请输入规格名称" />
           </el-form-item>
         </el-col>
         <el-col :span="6">
-          <el-form-item label="规格名称(英文)" prop="categoryId">
-            <el-input v-model="value.nameUs" placeholder="请输入规格名称" @input="updateDate"/>
+          <el-form-item label="套餐名称(阿语)" prop="categoryId">
+            <el-input v-model="items.nameArab" placeholder="请输入规格名称" />
           </el-form-item>
         </el-col>
-        <el-col :span="6">
-          <el-form-item label="规格名称(阿语)" prop="categoryId">
-            <el-input v-model="value.nameArab" placeholder="请输入规格名称" @input="updateDate"/>
+        <el-col :span="3" >
+          <el-form-item label="套餐原价" prop="categoryId">
+            <el-input-number v-model="items.price" :min="1" :max="99999"  />
           </el-form-item>
         </el-col>
-        <el-col :span="2" v-if='index === 0'>
-         <el-form-item label="规格封面" prop="title" label-width="110px">
-            <UploadImg  :showBtnText="false" :showDelete="false" height="50px" width="50px" style="top: -8px;position: absolute;" v-model="value.valuePicUrl" @success='updateDate'/>
+        <el-col :span="4" >
+          <el-form-item label="套餐折扣价" prop="categoryId">
+            <el-input-number v-model="items.discountPrice" :min="1" :max="99999"  />
           </el-form-item>
         </el-col>
-        <el-button color="red" class="ml-10"  plain   @click="handleCloseValue(index, valueIndex)">删除</el-button>
     </el-row>
-    <el-button type="success" class="ml-14 mt-4"  plain  @click="addSku(index,item.id)">添加规格</el-button>
+
+    <!-- <el-button type="success" class="ml-14 mt-4"  plain  @click="addSku(index)">添加规格</el-button> -->
   </el-form>
     <!-- <div>
       <el-text class="mx-1">属性名：</el-text>
@@ -92,8 +111,6 @@
     </div> -->
     <el-divider class="my-10px" />
   </el-col>
-    <!-- 商品规格添加 Form 表单 -->
-    <ProductPropertyAddForm ref="attributesAddFormRef" :propertyList="attributeList" :skuId="skuId" @success="successFc"/>
 </template>
 
 <script lang="ts" setup>
@@ -103,11 +120,22 @@ import { PropertyVO } from '@/api/mall/product/property'
 import { PropertyAndValues } from '@/views/mall/product/spu/components'
 import { propTypes } from '@/utils/propTypes'
 import { log } from 'console'
-import ProductPropertyAddForm from './ProductPropertyAddForm.vue'
+import { title } from 'process'
 
 defineOptions({ name: 'ProductAttributes' })
-const attributesAddFormRef = ref() // 添加商品规格表单
+const formData = ref({}) // 表单数据
 
+const test = [{
+  name:'中国',
+  num:99,
+  isSku:0,
+  status:0,
+  gj:[{
+    type:'沙特阿拉伯语',
+    name:'',
+    num:99,
+  }]
+}]
 const { t } = useI18n() // 国际化
 const message = useMessage() // 消息弹窗
 const inputValue = ref('') // 输入框值
@@ -126,22 +154,20 @@ const setInputRef = (el) => {
     inputRef.value.push(el)
   }
 }
-const attributeList = ref([]) // 商品属性列表
+const attributeList = ref<PropertyAndValues[]>([]) // 商品属性列表
 const props = defineProps({
-  propertyList: {
-    type: Array,
+  propFormData: {
+    type: Object ,
     default: () => {}
   },
   isDetail: propTypes.bool.def(false) // 是否作为详情组件
 })
 
 watch(
-  () => props.propertyList,
+  () => props.propFormData,
   (data) => {
     if (!data) return
-    console.log('data',data);
-    
-    attributeList.value = data
+    formData.value = data
   },
   {
     deep: true,
@@ -152,15 +178,13 @@ watch(
 /** 删除属性值*/
 const handleCloseValue = (index: number, valueIndex: number) => {
   attributeList.value[index].values?.splice(valueIndex, 1)
-  updateDate()
-  
 }
 
 /** 删除属性*/
 const handleCloseProperty = (index: number) => {
-  attributeList.value?.splice(index, 1)
-  updateDate()
-
+  formData.value.thalis?.splice(index, 1)
+  console.log(attributeList.value);
+  
 }
 
 /** 显示输入框并获取焦点 */
@@ -170,7 +194,7 @@ const showInput = async (index) => {
 }
 
 /** 输入框失去焦点或点击回车时触发 */
-const emit = defineEmits(['success','update']) // 定义 success 事件，用于操作成功后的回调
+const emit = defineEmits(['success']) // 定义 success 事件，用于操作成功后的回调
 const handleInputConfirm = async (index: number, propertyId: number) => {
   if (inputValue.value) {
     // 保存属性值
@@ -187,26 +211,44 @@ const handleInputConfirm = async (index: number, propertyId: number) => {
   inputValue.value = ''
 }
 // 添加规格
-const skuId = ref({})
-const addSku=(index,id)=>{
-  skuId.value = {
-    index,
-    id,
+const addSku=(index)=>{
+  console.log(attributeList.value[index]);
+  attributeList.value[index].values?.push({
+    id:99,
+    name:''
+  })
+}
+/** 主套餐修改 */
+const handleStatusChange = async (row: any,index:number) => {
+  console.log(row.isMaster);
+  if(row.isMaster){
+    formData.value.thalis.forEach((item,i)=>{
+      if(i !== index){
+        item.isMaster = 0
+      }
+    })
   }
-  attributesAddFormRef.value.open()
-  // console.log(attributeList.value[index]);
-  // attributeList.value[index].values?.push({
-  //   id:99,
-  //   name:''
-  // })
+  // let newRow = row.isMaster===0?1:0
+  // console.log(newRow);
+  // row.isMaster = newRow
+ 
 }
-const successFc = ()=>{
-  emit('success', attributeList.value)
+/** sku修改 */
+const handleSkuChange = async (row: any) => {
+  row = 0?1:0
 
-}
-const updateDate = ()=>{
-  console.log('xxxx',attributeList.value);
-  emit('update', attributeList.value)
+  // 此时，row 已经变成目标状态了，所以可以直接提交请求和提示
+  // let text = row.status === CommonStatusEnum.ENABLE ? '启用' : '停用'
 
+  // try {
+  //   await message.confirm('确认要"' + text + '""' + row.name + '"优惠劵吗?')
+  //   await CouponTemplateApi.updateCouponTemplateStatus(row.id, row.status)
+  //   message.success(text + '成功')
+  // } catch {
+  //   // 异常时，需要将 row.status 状态重置回之前的
+  //   row.status =
+  //     row.status === CommonStatusEnum.ENABLE ? CommonStatusEnum.DISABLE : CommonStatusEnum.ENABLE
+  // }
 }
+
 </script>

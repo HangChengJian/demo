@@ -418,20 +418,30 @@ watch(
 )
 
 /** 生成表数据 */
-const generateTableData = (propertyList: any[]) => {
+const generateTableData = (propertyList: any[],type=false) => {
+ 
   // 构建数据结构
   const propertyValues = propertyList.map((item) =>
     item.values.map((v) => ({
       propertyId: item.id,
       propertyName: item.name,
+      propertyNameUs:item.nameUs,
+      propertyNameArab:item.nameArab,
       valueId: v.id,
-      valueName: v.name
+      valueName: v.name,
+      valueNameUs:v.nameUs,
+      valueNameArab:v.nameArab,
+      valuePicUrl:v.valuePicUrl || ''
     }))
   )
   const buildSkuList = build(propertyValues)
   // 如果回显的 sku 属性和添加的属性不一致则重置 skus 列表
   if (!validateData(propertyList)) {
     // 如果不一致则重置表数据，默认添加新的属性重新生成 sku 列表
+    formData.value!.skus = []
+  }
+  if(type){
+    console.log('更新');
     formData.value!.skus = []
   }
   for (const item of buildSkuList) {
@@ -448,13 +458,18 @@ const generateTableData = (propertyList: any[]) => {
       firstBrokeragePrice: 0,
       secondBrokeragePrice: 0
     }
-    // 如果存在属性相同的 sku 则不做处理
-    const index = formData.value!.skus!.findIndex(
+    if(type){
+   
+  }else{
+ // 如果存在属性相同的 sku 则不做处理
+ const index = formData.value!.skus!.findIndex(
       (sku) => JSON.stringify(sku.properties) === JSON.stringify(row.properties)
     )
     if (index !== -1) {
       continue
     }
+  }
+   
     formData.value!.skus!.push(row)
   }
 }

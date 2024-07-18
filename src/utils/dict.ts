@@ -212,6 +212,11 @@ export enum DICT_TYPE {
   ERP_STOCK_RECORD_BIZ_TYPE = 'erp_stock_record_biz_type', // 库存明细的业务类型
 
   // ========== wenlv - 景点模块  ==========
-  POSITION_TYPE = 'position_type' // 景点状态
-
+  POSITION_TYPE = 'position_type', // 景点状态
+  // ========== 国家模块  ==========
+  COUNTRY_TYPE = 'country_type', //
+  // ========== 渠道模块  ==========
+  CHANNEL_TYPE = 'channel_type', //
+    // ========== 像素模块  ==========
+  PIXEL_TYPE = 'pixel_type' //
 }

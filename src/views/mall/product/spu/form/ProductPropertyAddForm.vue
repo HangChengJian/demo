@@ -1,15 +1,21 @@
 <!-- 商品发布 - 库存价格 - 添加属性 -->
 <template>
-  <Dialog v-model="dialogVisible" title="添加商品属性">
+  <Dialog v-model="dialogVisible" :title="'添加商品'+text">
     <el-form
       ref="formRef"
       v-loading="formLoading"
       :model="formData"
       :rules="formRules"
-      label-width="80px"
+      label-width="120px"
     >
-      <el-form-item label="属性名称" prop="name">
+      <el-form-item :label="text+'名称(中文)'" prop="name" >
         <el-input v-model="formData.name" placeholder="请输入名称" />
+      </el-form-item>
+      <el-form-item :label="text+'名称(英文)'" prop="nameUs" class="mt-4">
+        <el-input v-model="formData.nameUs" placeholder="请输入名称" />
+      </el-form-item>
+      <el-form-item :label="text+'名称(阿语)'" prop="nameArab" class="mt-4">
+        <el-input v-model="formData.nameArab" placeholder="请输入名称" />
       </el-form-item>
     </el-form>
     <template #footer>
@@ -20,8 +26,10 @@
 </template>
 <script lang="ts" setup>
 import * as PropertyApi from '@/api/mall/product/property'
+import { log } from 'console';
 
 defineOptions({ name: 'ProductPropertyForm' })
+const emit = defineEmits(['success']) // 定义 success 事件，用于操作成功后的回调
 
 const { t } = useI18n() // 国际化
 const message = useMessage() // 消息弹窗
@@ -29,10 +37,14 @@ const message = useMessage() // 消息弹窗
 const dialogVisible = ref(false) // 弹窗的是否展示
 const formLoading = ref(false) // 表单的加载中
 const formData = ref({
-  name: ''
+  name: '',
+  nameUs:'',
+  nameArab:''
 })
 const formRules = reactive({
-  name: [{ required: true, message: '名称不能为空', trigger: 'blur' }]
+  name: [{ required: true, message: '名称不能为空', trigger: 'blur' }],
+  nameUs: [{ required: true, message: '名称不能为空', trigger: 'blur' }],
+  nameArab: [{ required: true, message: '名称不能为空', trigger: 'blur' }],
 })
 const formRef = ref() // 表单 Ref
 const attributeList = ref([]) // 商品属性列表
@@ -40,9 +52,13 @@ const props = defineProps({
   propertyList: {
     type: Array,
     default: () => {}
+  },
+  skuId: {
+    type: Object, 
+    default: null
   }
 })
-
+const text = ref(props.skuId?'规格':'属性')
 watch(
   () => props.propertyList, // 解决 props 无法直接修改父组件的问题
   (data) => {
@@ -64,14 +80,32 @@ defineExpose({ open }) // 提供 open 方法，用于打开弹窗
 
 /** 提交表单 */
 const submitForm = async () => {
+  // attributeList.value.length = 1
+  console.log('attributeList.value',attributeList.value);
   // 校验表单
   if (!formRef) return
   const valid = await formRef.value.validate()
   if (!valid) return
   // 提交请求
   formLoading.value = true
+  const data = formData.value as PropertyApi.PropertyVO
+
+  if(props.skuId){
+    //添加规格
+    console.log('添加规格',props.skuId);
+    try {
+      const id = await PropertyApi.createPropertyValue({ propertyId:props.skuId.id,...data })
+      attributeList.value[props.skuId.index].values.push({ id, ...data })
+      // message.success(t('common.createSuccess'))
+      emit('success')
+    dialogVisible.value = false
+
+    } finally {
+    formLoading.value = false
+  }
+   return 
+  }
   try {
-    const data = formData.value as PropertyApi.PropertyVO
     const propertyId = await PropertyApi.createProperty(data)
     // 添加到属性列表
     attributeList.value.push({
@@ -79,7 +113,10 @@ const submitForm = async () => {
       ...formData.value,
       values: []
     })
-    message.success(t('common.createSuccess'))
+    console.log(attributeList.value);
+    
+    // message.success()
+    emit('success')
     dialogVisible.value = false
   } finally {
     formLoading.value = false

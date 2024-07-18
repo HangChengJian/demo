@@ -35,18 +35,20 @@ const getPropertyList = (spu: Spu): PropertyAndValues[] => {
   // 只有是多规格才处理
   if (spu.specType) {
     spu.skus?.forEach((sku) => {
-      sku.properties?.forEach(({ propertyId, propertyName, valueId, valueName }) => {
+      sku.properties?.forEach(({ propertyId, propertyName,propertyNameArab,propertyNameUs,valueNameArab,valueNameUs,valueId, valueName,valuePicUrl }) => {
         // 添加属性
         if (!properties?.some((item) => item.id === propertyId)) {
-          properties.push({ id: propertyId!, name: propertyName!, values: [] })
+          properties.push({ id: propertyId!, name: propertyName!,nameArab:propertyNameArab!,nameUs:propertyNameUs!, values: [] })
         }
         // 添加属性值
         const index = properties?.findIndex((item) => item.id === propertyId)
         if (!properties[index].values?.some((value) => value.id === valueId)) {
-          properties[index].values?.push({ id: valueId!, name: valueName! })
+          properties[index].values?.push({ id: valueId!, name: valueName!,nameArab:valueNameArab!,nameUs:valueNameUs!,valuePicUrl })
         }
       })
     })
+  }
+  if(properties.length == 0){
   }
   return properties
 }

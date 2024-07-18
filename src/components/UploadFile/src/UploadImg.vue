@@ -93,7 +93,7 @@ const imagePreview = (imgUrl: string) => {
   })
 }
 
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits(['update:modelValue','success'])
 
 const deleteImg = () => {
   emit('update:modelValue', '')
@@ -119,6 +119,7 @@ const beforeUpload: UploadProps['beforeUpload'] = (rawFile) => {
 const uploadSuccess: UploadProps['onSuccess'] = (res: any): void => {
   message.success('上传成功')
   emit('update:modelValue', res.data)
+  emit('success')
 }
 
 // 图片上传错误提示
