@@ -32,7 +32,7 @@
         <el-input v-model="formData.currency" placeholder="请输入货币" />
       </el-form-item>
       <el-form-item label="商品封面图" prop="picUrl">
-      <UploadImg v-model="formData.countryImg"  height="80px" />
+      <UploadImg v-model="formData.countryUrl"  height="80px" />
     </el-form-item>
     </el-form>
     
@@ -56,7 +56,7 @@ const dialogTitle = ref('') // 弹窗的标题
 const formLoading = ref(false) // 表单的加载中：1）修改时的数据加载；2）提交的按钮禁用
 const formType = ref('') // 表单的类型：create - 新增；update - 修改
 const formData = ref({
-  countryImg:undefined,
+  countryUrl:undefined,
   id: undefined,
   countryCode: undefined,
   countryEn: undefined,
@@ -116,7 +116,7 @@ const submitForm = async () => {
 /** 重置表单 */
 const resetForm = () => {
   formData.value = {
-  countryImg:undefined,
+    countryUrl:undefined,
     id: undefined,
     countryCode: undefined,
     countryEn: undefined,

@@ -214,7 +214,7 @@
             <el-image
               fit="cover"
               :src="row.picUrl"
-              class="flex-none w-50px h-50px"
+              class="flex-none w-50px h-50px pointer"
               @click="imagePreview(row.picUrl)"
             />
             <div class="ml-4 overflow-hidden">
@@ -232,7 +232,7 @@
             <el-image
               fit="cover"
               :src="row.picUrl"
-              class="flex-none w-50px h-50px"
+              class="flex-none w-50px h-50px pointer"
               @click="imagePreview(row.marketingUrl)"
               v-if='row.marketingUrl'
             />

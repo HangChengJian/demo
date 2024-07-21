@@ -40,12 +40,12 @@ export interface OrderVO {
 export const OrderApi = {
   // 查询跨国订单分页
   getOrderPage: async (params: any) => {
-    return await request.get({ url: `/mall/order/page`, params })
+    return await request.get({ url: `/trade/tb-order/page`, params })
   },
 
   // 查询跨国订单详情
   getOrder: async (id: number) => {
-    return await request.get({ url: `/mall/order/get?id=` + id })
+    return await request.get({ url: `/trade/tb-order/get?id=` + id })
   },
 
   // 新增跨国订单
@@ -60,11 +60,29 @@ export const OrderApi = {
 
   // 删除跨国订单
   deleteOrder: async (id: number) => {
-    return await request.delete({ url: `/mall/order/delete?id=` + id })
+    return await request.delete({ url: `/trade/tb-order/delete?id=` + id })
   },
 
   // 导出跨国订单 Excel
   exportOrder: async (params) => {
-    return await request.download({ url: `/mall/order/export-excel`, params })
-  }
+    return await request.download({ url: `/trade/tb-order/export-excel`, params })
+  },
+
+  // 修改订单状态
+  setUnSend: async (data) => {
+    return await request.post({ url: `/trade/tb-order/setUnSend`, data })
+  },
+  // 导入客户
+  handleImport : async (formData) => {
+  return await request.upload({ url: `/trade/tb-order/import`, data: formData })
+  },
+   // 发货
+   sendOrder: async (id) => {
+    return await request.get({ url: `/trade/tb-order/delivery?id=` + id })
+  },
+  // 查询物流
+  getLogistics: async (id) => {
+    return await request.get({ url: `/trade/tb-order/getLogistics?id=` + id })
+  },
+  
 }

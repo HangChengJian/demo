@@ -76,10 +76,10 @@
         <template #default="{ row }">
             <el-image
               fit="cover"
-              :src="row.picUrl"
-              class="flex-none w-50px h-50px"
-              @click="imagePreview(row.countryImg)"
-              v-if='row.countryImg'
+              :src="row.countryUrl"
+              class="flex-none w-50px h-50px pointer"
+              @click="imagePreview(row.countryUrl)"
+              v-if='row.countryUrl'
             />
             <span v-else>无</span>
         </template>

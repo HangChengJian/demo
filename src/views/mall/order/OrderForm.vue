@@ -7,13 +7,55 @@
       label-width="100px"
       v-loading="formLoading"
     >
-      <el-form-item label="订单内部编号" prop="no">
+      <!-- <el-form-item label="订单内部编号" prop="no">
         <el-input v-model="formData.no" placeholder="请输入订单内部编号" />
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item label="下单链接" prop="downUrl">
         <el-input v-model="formData.downUrl" placeholder="请输入下单链接" />
       </el-form-item>
-      <el-form-item label="购买链接" prop="productUrl">
+      <el-form-item label="套餐商品金额" prop="productPrice">
+        <el-input v-model="formData.productPrice" placeholder="请输入套餐商品金额" />
+      </el-form-item>
+      <el-form-item label="商家备注" prop="productPrice">
+        <el-input v-model="formData.productPrice" placeholder="请输入商家备注" />
+      </el-form-item>
+      <el-form-item label="商家备注" prop="productPrice">
+        <el-input v-model="formData.productPrice" placeholder="请输入商家备注" />
+      </el-form-item>
+      <el-form-item label="商品套餐编号" prop="thaliId">
+        <el-input v-model="formData.thaliId" placeholder="请输入商品套餐编号" />
+      </el-form-item>
+      <el-form-item label="地区" prop="region">
+        <el-input v-model="formData.region" placeholder="请输入地区" />
+      </el-form-item>
+      <el-form-item label="地区编号" prop="regionId">
+        <el-input v-model="formData.regionId" placeholder="请输入地区编号" />
+      </el-form-item>
+
+      <el-form-item label="收件人名称" prop="receiverName">
+        <el-input v-model="formData.receiverName" placeholder="请输入收件人名称" />
+      </el-form-item>
+      <el-form-item label="收件人手机" prop="receiverMobile">
+        <el-input v-model="formData.receiverMobile" placeholder="请输入收件人手机" />
+      </el-form-item>
+      <el-form-item label="收件人备用手机" prop="receiverSpareMobile">
+        <el-input v-model="formData.receiverSpareMobile" placeholder="请输入收件人备用手机" />
+      </el-form-item>
+      <el-form-item label="收件人邮箱" prop="receiverEmali">
+        <el-input v-model="formData.receiverEmali" placeholder="请输入收件人邮箱" />
+      </el-form-item>
+      <el-form-item label="收件人地址" prop="receiverAddress">
+        <el-input v-model="formData.receiverAddress" placeholder="请输入收件人地址" />
+      </el-form-item>
+
+
+
+
+
+
+
+
+      <!-- <el-form-item label="购买链接" prop="productUrl">
         <el-input v-model="formData.productUrl" placeholder="请输入购买链接" />
       </el-form-item>
       <el-form-item label="订单类型" prop="type">
@@ -73,9 +115,7 @@
       <el-form-item label="商家备注" prop="remark">
         <el-input v-model="formData.remark" placeholder="请输入商家备注" />
       </el-form-item>
-      <el-form-item label="商品套餐编号" prop="thaliId">
-        <el-input v-model="formData.thaliId" placeholder="请输入商品套餐编号" />
-      </el-form-item>
+    
       <el-form-item label="商品 SPU 编号" prop="spuId">
         <el-input v-model="formData.spuId" placeholder="请输入商品 SPU 编号" />
       </el-form-item>
@@ -85,21 +125,7 @@
       <el-form-item label="商品 SKU 编号" prop="skuId">
         <el-input v-model="formData.skuId" placeholder="请输入商品 SKU 编号" />
       </el-form-item>
-      <el-form-item label="地区编号" prop="regionId">
-        <el-input v-model="formData.regionId" placeholder="请输入地区编号" />
-      </el-form-item>
-      <el-form-item label="收件人名称" prop="receiverName">
-        <el-input v-model="formData.receiverName" placeholder="请输入收件人名称" />
-      </el-form-item>
-      <el-form-item label="收件人手机" prop="receiverMobile">
-        <el-input v-model="formData.receiverMobile" placeholder="请输入收件人手机" />
-      </el-form-item>
-      <el-form-item label="收件人邮箱" prop="receiverEmali">
-        <el-input v-model="formData.receiverEmali" placeholder="请输入收件人邮箱" />
-      </el-form-item>
-      <el-form-item label="收件人地址" prop="receiverAddress">
-        <el-input v-model="formData.receiverAddress" placeholder="请输入收件人地址" />
-      </el-form-item>
+    
       <el-form-item label="收件人经度" prop="receiverLatitude">
         <el-input v-model="formData.receiverLatitude" placeholder="请输入收件人经度" />
       </el-form-item>
@@ -120,7 +146,7 @@
       </el-form-item>
       <el-form-item label="用户备注" prop="userRemark">
         <el-input v-model="formData.userRemark" placeholder="请输入用户备注" />
-      </el-form-item>
+      </el-form-item> -->
     </el-form>
     <template #footer>
       <el-button @click="submitForm" type="primary" :disabled="formLoading">确 定</el-button>
