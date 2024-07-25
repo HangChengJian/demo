@@ -7,7 +7,7 @@ const config: {
   /**
    * api请求基础路径
    */
-  base_url: 'http://8dh1ls332.shenzhuo.vip:57058' + import.meta.env.VITE_API_URL,
+  base_url: 'http://www.cricketld.com' + import.meta.env.VITE_API_URL,
   /**
    * 接口成功返回状态码
    */

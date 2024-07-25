@@ -12,17 +12,17 @@
     >
    <el-row>
       <el-col :span="6">
-          <el-form-item label="属性名称(中文)" prop="title" style="font-weight: 600;">
+          <el-form-item label="属性名称(中文)" prop="name" style="font-weight: 600;">
             <el-input v-model="item.name" placeholder="请输入属性名称" @input="updateDate"/>
           </el-form-item>
         </el-col>
         <el-col :span="6">
-          <el-form-item label="属性名称(英文)" prop="categoryId"  style="font-weight: 600;">
+          <el-form-item label="属性名称(英文)" prop="nameUs"  style="font-weight: 600;">
             <el-input v-model="item.nameUs" placeholder="请输入属性名称" @input="updateDate"/>
           </el-form-item>
         </el-col>
         <el-col :span="6">
-          <el-form-item label="属性名称(阿语)" prop="categoryId"  style="font-weight: 600;">
+          <el-form-item label="属性名称(阿语)" prop="nameArab"  style="font-weight: 600;">
             <el-input v-model="item.nameArab" placeholder="请输入属性名称" @input="updateDate"/>
           </el-form-item>
         </el-col>
@@ -45,12 +45,16 @@
             <el-input v-model="value.nameArab" placeholder="请输入规格名称" @input="updateDate"/>
           </el-form-item>
         </el-col>
-        <el-col :span="2" v-if='index === 0'>
-         <el-form-item label="规格封面" prop="title" label-width="110px">
+        <el-col :span="4" v-if='index === 0'>
+          <div style="display: flex; align-items: center;">
+            <el-form-item label="规格封面" prop="title" label-width="110px"  >
             <UploadImg  :showBtnText="false" :showDelete="false" height="50px" width="50px" style="top: -8px;position: absolute;" v-model="value.valuePicUrl" @success='updateDate'/>
           </el-form-item>
+          <el-button color="red" class="ml-20"  plain   @click="handleCloseValue(index, valueIndex)">删除</el-button>
+          </div>
         </el-col>
-        <el-button color="red" class="ml-10"  plain   @click="handleCloseValue(index, valueIndex)">删除</el-button>
+        <el-button color="red" class="ml-10"  plain   @click="handleCloseValue(index, valueIndex)" v-else>删除</el-button>
+
     </el-row>
     <el-button type="success" class="ml-14 mt-4"  plain  @click="addSku(index,item.id)">添加规格</el-button>
   </el-form>
@@ -139,8 +143,6 @@ watch(
   () => props.propertyList,
   (data) => {
     if (!data) return
-    console.log('data',data);
-    
     attributeList.value = data
   },
   {

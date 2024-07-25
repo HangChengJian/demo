@@ -17,12 +17,12 @@
             <el-input v-model="item.name" placeholder="请输入套餐名称" />
           </el-form-item>
         </el-col>
-        <el-col :span="4">
+        <el-col :span="6">
           <el-form-item label="套餐商品数量" prop="categoryId"  >
             <el-input-number v-model="item.num" :min="1" :max="99999"  />
           </el-form-item>
         </el-col>
-        <el-col :span="2">
+        <el-col :span="4">
           <el-form-item label="是否独立SKU" prop="categoryId"  >
             <el-switch
             v-model="item.isAlone"
@@ -32,7 +32,7 @@
           />
           </el-form-item>
         </el-col>
-        <el-col :span="2">
+        <el-col :span="4">
           <el-form-item label="是否为主套餐" prop="categoryId"  >
             <el-switch
             v-model="item.isMaster"
@@ -59,14 +59,14 @@
             <el-input v-model="items.nameArab" placeholder="请输入规格名称" />
           </el-form-item>
         </el-col>
-        <el-col :span="3" >
-          <el-form-item label="套餐原价" prop="categoryId">
-            <el-input-number v-model="items.price" :min="1" :max="99999"  />
+        <el-col :span="5">
+          <el-form-item label="套餐原价" prop="categoryId" class="input-style">
+            <el-input-number v-model="items.price" :min="1" :max="99999" :controls='false' />
           </el-form-item>
         </el-col>
-        <el-col :span="4" >
+        <el-col :span="5" >
           <el-form-item label="套餐折扣价" prop="categoryId">
-            <el-input-number v-model="items.discountPrice" :min="1" :max="99999"  />
+            <el-input-number v-model="items.discountPrice" :min="1" :max="99999" :controls='false' />
           </el-form-item>
         </el-col>
     </el-row>
@@ -252,3 +252,8 @@ const handleSkuChange = async (row: any) => {
 }
 
 </script>
+<style>
+.input-style{
+  
+}
+</style>

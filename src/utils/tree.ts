@@ -376,6 +376,7 @@ export const treeToString = (tree: any[], nodeId) => {
   let str = ''
 
   function performAThoroughValidation(arr) {
+    if(!arr)return
     for (const item of arr) {
       if (item.id === nodeId) {
         str += ` / ${item.name}`
@@ -389,7 +390,6 @@ export const treeToString = (tree: any[], nodeId) => {
     }
     return false
   }
-
   for (const item of tree) {
     str = `${item.name}`
     if (performAThoroughValidation(item.children)) {

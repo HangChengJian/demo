@@ -5,13 +5,19 @@
       v-loading="formLoading"
       :model="formData"
       :rules="formRules"
-      label-width="80px"
+      label-width="120px"
     >
       <el-form-item label="属性编号" prop="category">
         <el-input v-model="formData.propertyId" disabled="" />
       </el-form-item>
-      <el-form-item label="名称" prop="name">
-        <el-input v-model="formData.name" placeholder="请输入名称" />
+      <el-form-item label="规格名称(中文)" prop="name">
+        <el-input v-model="formData.name" placeholder="请输入属性名称" />
+      </el-form-item>
+      <el-form-item label="规格名称(英文)" prop="nameUs">
+        <el-input v-model="formData.nameUs" placeholder="请输入属性名称" />
+      </el-form-item>
+      <el-form-item label="规格名称(阿语)" prop="nameArab">
+        <el-input v-model="formData.nameArab" placeholder="请输入属性名称" />
       </el-form-item>
       <el-form-item label="备注" prop="remark">
         <el-input v-model="formData.remark" placeholder="请输入内容" type="textarea" />
@@ -39,11 +45,15 @@ const formData = ref({
   id: undefined,
   propertyId: undefined,
   name: '',
-  remark: ''
+  remark: '',
+  nameUs:'',
+  nameArab:''
 })
 const formRules = reactive({
   propertyId: [{ required: true, message: '属性不能为空', trigger: 'blur' }],
-  name: [{ required: true, message: '名称不能为空', trigger: 'blur' }]
+  name: [{ required: true, message: '名称不能为空', trigger: 'blur' }],
+  nameUs: [{ required: true, message: '名称不能为空', trigger: 'blur' }],
+  nameArab: [{ required: true, message: '名称不能为空', trigger: 'blur' }],
 })
 const formRef = ref() // 表单 Ref
 
@@ -98,7 +108,9 @@ const resetForm = () => {
     id: undefined,
     propertyId: undefined,
     name: '',
-    remark: ''
+    remark: '',
+    nameUs:'',
+    nameArab:''
   }
   formRef.value?.resetFields()
 }

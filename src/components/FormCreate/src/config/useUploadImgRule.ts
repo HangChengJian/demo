@@ -30,7 +30,7 @@ export const useUploadImgRule = () => {
           type: 'select',
           field: 'fileType',
           title: '图片类型限制',
-          value: ['image/jpeg', 'image/png', 'image/gif'],
+          value: ['image/jpeg', 'image/png', 'image/gif','image/webp'],
           options: [
             { label: 'image/apng', value: 'image/apng' },
             { label: 'image/bmp', value: 'image/bmp' },

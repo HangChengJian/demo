@@ -101,7 +101,7 @@ const crudSchemas = reactive<CrudSchema[]>([
     }
   },
   {
-    label: '砍价的最小金额',
+    label: '砍价的最22222222222222222222小金额',
     field: 'randomMinPrice',
     isSearch: false,
     isTable: false,

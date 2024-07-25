@@ -130,8 +130,6 @@ watch(
     copyValueToTarget(formData, data)
     // 将 SKU 的属性，整理成 PropertyAndValues 数组
     propertyList.value = getPropertyList(data)
-    console.log('谷歌11111111',propertyList.value);
-    
   },
   {
     immediate: true

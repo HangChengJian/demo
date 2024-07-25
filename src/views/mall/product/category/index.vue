@@ -37,8 +37,8 @@
   <!-- 列表 -->
   <ContentWrap>
     <el-table v-loading="loading" :data="list" row-key="id" default-expand-all>
-      <el-table-column label="名称" min-width="240" prop="name" sortable />
-      <el-table-column label="分类图标" align="center" min-width="80" prop="picUrl">
+      <el-table-column label="名称"  prop="name" sortable />
+      <!-- <el-table-column label="分类图标" align="center" min-width="80" prop="picUrl">
         <template #default="scope">
           <img :src="scope.row.picUrl" alt="移动端分类图" class="h-36px" />
         </template>
@@ -48,12 +48,11 @@
         <template #default="scope">
           <dict-tag :type="DICT_TYPE.COMMON_STATUS" :value="scope.row.status" />
         </template>
-      </el-table-column>
+      </el-table-column> -->
       <el-table-column
         label="创建时间"
         align="center"
         prop="createTime"
-        width="180"
         :formatter="dateFormatter"
       />
       <el-table-column label="操作" align="center">

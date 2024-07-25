@@ -152,13 +152,13 @@
       />
     </el-form-item>
     <el-form-item label="商品封面图" prop="picUrl">
-      <UploadImg v-model="formData.picUrl" :disabled="isDetail" height="80px" />
+      <UploadImg v-model="formData.picUrl" :disabled="isDetail" height="80px" width="80px" :showBtnText='false'  />
     </el-form-item>
     <el-form-item label="商品轮播图" prop="sliderPicUrls">
-      <UploadImgs v-model="formData.sliderPicUrls" :disabled="isDetail" />
+      <UploadImgs v-model="formData.sliderPicUrls" :disabled="isDetail" :limit="99" height="80px" width="80px"/>
     </el-form-item>
     <el-form-item label="商品活动图" prop="marketingUrl">
-      <UploadImg v-model="formData.marketingUrl" :disabled="isDetail" height="80px" />
+      <UploadImg v-model="formData.marketingUrl" :disabled="isDetail" height="80px" width="80px" :showBtnText='false' />
     </el-form-item>
   </el-form>
 </template>

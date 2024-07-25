@@ -7,6 +7,7 @@ import { isNumber } from '@/utils/is'
 import { ElMessage } from 'element-plus'
 import { useLocaleStore } from '@/store/modules/locale'
 import { getAccessToken, getTenantId } from '@/utils/auth'
+import UserImportForm from './UserImportForm.vue'
 
 defineOptions({ name: 'Editor' })
 
@@ -58,7 +59,11 @@ watch(
 const handleCreated = (editor: IDomEditor) => {
   editorRef.value = editor
 }
-
+/** 用户导入 */
+const importFormRef = ref()
+const handleImport = () => {
+  importFormRef.value.open()
+}
 // 编辑器配置
 const editorConfig = computed((): IEditorConfig => {
   return Object.assign(
@@ -86,8 +91,18 @@ const editorConfig = computed((): IEditorConfig => {
       },
       autoFocus: false,
       scroll: true,
+   
       MENU_CONF: {
         ['uploadImage']: {
+              // 自定义选择图片
+          customBrowseAndUpload(insertFn: InsertFnType) {   // TS 语法
+          // customBrowseAndUpload(insertFn) {              // JS 语法
+              // 自己选择文件
+              // 自己上传文件，并得到图片 url alt href
+              // 最后插入图片
+              handleImport()
+              // insertFn('https://digital-plane.oss-cn-hangzhou.aliyuncs.com…1aafffec590dfceb48ba872c2a90189f3a824e4c6757d.png', 'alt', 'https://digital-plane.oss-cn-hangzhou.aliyuncs.com…1aafffec590dfceb48ba872c2a90189f3a824e4c6757d.png')
+          },
           server: import.meta.env.VITE_UPLOAD_URL,
           // 单个文件的最大体积限制，默认为 2M
           maxFileSize: 5 * 1024 * 1024,
@@ -173,7 +188,22 @@ const getEditorRef = async (): Promise<IDomEditor> => {
   await nextTick()
   return unref(editorRef.value) as IDomEditor
 }
+const addImg = (arr)=>{
+  //  let test = {
+  //       url: "https://digital-plane.oss-cn-hangzhou.aliyuncs.com/4db7929b2c219c7777326993c6acf8296fbd6597470de1fdddfa4c6666265102.jpg", // 图片 src ，必须
+  //       alt: "yyy", // 图片描述文字，非必须
+  //       href: "https://digital-plane.oss-cn-hangzhou.aliyuncs.com/4db7929b2c219c7777326993c6acf8296fbd6597470de1fdddfa4c6666265102.jpg" // 图片的链接，非必须
+  //   }
 
+ 
+  // console.log('添加',getEditorRef())
+  let newHtml = ''
+  arr.forEach(element => {
+    newHtml+=`<img src=\"${element}\" alt=\"image\" data-href=\"${element}\" />`
+  });
+  let html = valueHtml.value.replace(/<p>/g,"").replace(/<\/p>/g,'')
+  valueHtml.value = `<p>${html}${newHtml}</p>`
+}
 defineExpose({
   getEditorRef
 })
@@ -197,6 +227,7 @@ defineExpose({
       @on-created="handleCreated"
     />
   </div>
+  <UserImportForm ref="importFormRef" @success="addImg" />
 </template>
 
 <style src="@wangeditor/editor/dist/css/style.css"></style>

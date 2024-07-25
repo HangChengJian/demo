@@ -31,7 +31,7 @@ export default ({ command, mode }: ConfigEnv): UserConfig => {
       // 本地跨域代理. 目前注释的原因：暂时没有用途，server 端已经支持跨域
       // proxy: {
       //   ['/admin-api']: {
-      //     target: 'http://8dh1ls332.shenzhuo.vip:57058/admin-api',
+      //     target: 'http://www.cricketld.com/admin-api',
       //     ws: false,
       //     changeOrigin: true,
       //     rewrite: (path) => path.replace(new RegExp(`^/admin-api`), ''),

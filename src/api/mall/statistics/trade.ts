@@ -64,6 +64,17 @@ export const getTradeStatisticsSummary = () => {
     url: '/statistics/trade/summary'
   })
 }
+// 查询交易统计
+export const getTbSummaryPrice = () => {
+  return request.get({
+    url: '/trade/tb-order/tbSummaryPrice'
+  })
+}
+export const getJySum = () => {
+  return request.get({
+    url: '/trade/tb-order/tbSummaryCount'
+  })
+}
 
 // 获得交易状况统计
 export const getTradeStatisticsAnalyse = (params: TradeTrendReqVO) => {

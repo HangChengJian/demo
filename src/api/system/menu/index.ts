@@ -47,3 +47,8 @@ export const updateMenu = (data: MenuVO) => {
 export const deleteMenu = (id: number) => {
   return request.delete({ url: '/system/menu/delete?id=' + id })
 }
+
+// 获取表头字段
+export const getTitle = () => {
+  return request.get({ url: '/trade/tb-order/getFields'})
+}

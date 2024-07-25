@@ -1,6 +1,6 @@
 <!-- 套餐 -->
 <template>
-  <el-form ref="formRef" :model="formData" :rules="rules" label-width="120px" :disabled="isDetail">
+  <el-form ref="formRef" :model="formData" :rules="rules"  :disabled="isDetail">
     <el-form-item >
       <PackageAttributes
         :propFormData="propertyDate"
@@ -24,7 +24,6 @@ import PackageAttributes from './PackageAttributes.vue'
 import type { Spu } from '@/api/mall/product/spu'
 import { DICT_TYPE,getIntDictOptions, getStrDictOptions } from '@/utils/dict'
 let countryList = getIntDictOptions(DICT_TYPE.COUNTRY_TYPE)
-console.log('tetst',countryList);
 
 defineOptions({ name: 'ProductSpuSkuForm' })
 
@@ -81,7 +80,6 @@ watch(
       return
     }
     copyValueToTarget(formData, data)
-    console.log('formDataformDataformData',formData);
     
     propertyDate.value = data
   },
@@ -157,7 +155,6 @@ const addSku=()=>{
       })
     })
   propertyDate.value.thalis.push(obj)
-    console.log(propertyDate.value);
     
 }
 

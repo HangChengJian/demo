@@ -1,5 +1,5 @@
 <template>
-  <doc-alert title="【商品】商品属性" url="https://doc.iocoder.cn/mall/product-property/" />
+  <doc-alert title="【商品】商品属性" url="" />
 
   <!-- 搜索工作栏 -->
   <ContentWrap>
@@ -75,7 +75,7 @@
           >
             编辑
           </el-button>
-          <el-button link type="primary" @click="goValueList(scope.row.id)">属性值</el-button>
+          <el-button link type="primary" @click="goValueList(scope.row.id)">规格值</el-button>
           <el-button
             v-hasPermi="['product:property:delete']"
             link

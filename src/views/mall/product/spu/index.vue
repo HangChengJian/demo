@@ -109,7 +109,7 @@
           <Icon class="mr-5px" icon="ep:plus" />
           新增
         </el-button>
-        <el-button
+        <!-- <el-button
           v-hasPermi="['product:spu:export']"
           :loading="exportLoading"
           plain
@@ -118,7 +118,7 @@
         >
           <Icon class="mr-5px" icon="ep:download" />
           导出
-        </el-button>
+        </el-button> -->
       </el-form-item>
     </el-form>
   </ContentWrap>
@@ -140,7 +140,7 @@
             <el-row>
               <el-col :span="24">
                 <el-row>
-                  <el-col :span="2">
+                  <el-col :span="3">
                     <el-form-item label="内部编码:">
                       <div class="fx-ct pointer color-88" @click="copy(row.id)" v-if="row.id">
                         {{ row.id }}
@@ -150,14 +150,12 @@
                   </el-col>
                   <el-col :span="6">
                     <el-form-item label="推广链接:">
-                      <div class="pointer color-88" @click="copy(row.promotionUrl)" v-if="row.promotionUrl">
-                        {{ row.promotionUrl || '无'}}
-                        <span  style="position: relative;top: 2px">
-                          <Icon icon="svg-icon:copy" class="ml-4px color-88" :size="18" />
-                        </span>
+                      <div class="pointer color-88 text-sl" @click="copy(row.promotionUrl)"  style="width: 100%;" v-for="(item, index) in row.procureUrls" :key="index">
+                        {{ item || '无'}}
                         </div>
                     </el-form-item>
                   </el-col>
+                  
                   <el-col :span="4">
                     <el-form-item label="whatsapp:">
                       <div class="pointer color-88" @click="copy(row.whatsapp)" >
@@ -381,8 +379,12 @@ ProductSpuApi.getSimple().then(res=>{
   userList.value = res
 })
 const salesmanName = (id)=>{
-  let name = userList.value.filter(e => e.id == id )[0].nickname
-  return name
+  let name = userList.value.filter(e => e.id == id )[0]
+  if(name?.nickname){
+    return name.nickname
+  }else{
+    return ''
+  }
 }
 // tabs 数据
 const tabsData = ref([
@@ -590,5 +592,10 @@ const copy = async (text: string) => {
     font-weight: bold;
     color: #99a9bf;
   }
+}
+.text-sl{
+  overflow: hidden; /* 确保内容超出容器时会被隐藏 */
+  white-space: nowrap; /* 确保文本在一行内显示，避免换行 */
+  text-overflow: ellipsis; /* 用省略号表示被截断的文本 */
 }
 </style>

@@ -6,58 +6,49 @@
       :model="queryParams"
       ref="queryFormRef"
       :inline="true"
-      label-width="98px"
+      label-width="68px"
     >
-      <el-form-item label="Banner 编号" prop="id">
+      <el-form-item label="模板名称" prop="templateName">
         <el-input
-          v-model="queryParams.id"
-          placeholder="请输入Banner 编号"
+          v-model="queryParams.templateName"
+          placeholder="请输入模板名称"
           clearable
           @keyup.enter="handleQuery"
           class="!w-240px"
         />
       </el-form-item>
-      <el-form-item label="Banner 标题" prop="title">
+      <!-- <el-form-item label="模板值值" prop="templateValue">
         <el-input
-          v-model="queryParams.title"
-          placeholder="请输入Banner 标题"
+          v-model="queryParams.templateValue"
+          placeholder="请输入模板值值"
           clearable
           @keyup.enter="handleQuery"
           class="!w-240px"
         />
+      </el-form-item>
+      -->
+       <el-form-item label="是否置顶" prop="origion">
+        <el-cascader
+        v-model="queryParams.isTop"
+        :options="topType"
+        :props="topProps"
+        class="w-1/1"
+          clearable
+          filterable
+          placeholder="请选择是否置顶"
+      />
       </el-form-item>
       <el-form-item label="创建时间" prop="createTime">
         <el-date-picker
           v-model="queryParams.createTime"
           value-format="YYYY-MM-DD HH:mm:ss"
-          type="datetimerange"
-          start-placeholder="开始时间"
-          end-placeholder="结束时间"
+          type="daterange"
+          start-placeholder="开始日期"
+          end-placeholder="结束日期"
+          :default-time="[new Date('1 00:00:00'), new Date('1 23:59:59')]"
           class="!w-240px"
         />
       </el-form-item>
-    
-      <el-form-item label="开始时间" prop="beginTime">
-        <el-date-picker
-          v-model="queryParams.beginTime"
-          value-format="YYYY-MM-DD HH:mm:ss"
-          type="datetimerange"
-          start-placeholder="开始时间"
-          end-placeholder="结束时间"
-          class="!w-400px"
-        />
-      </el-form-item>
-      <el-form-item label="结束时间" prop="endTime">
-        <el-date-picker
-          v-model="queryParams.endTime"
-          value-format="YYYY-MM-DD HH:mm:ss"
-          type="datetimerange"
-          start-placeholder="开始时间"
-          end-placeholder="结束时间"
-          class="!w-400px"
-        />
-      </el-form-item>
-      
       <el-form-item>
         <el-button @click="handleQuery"><Icon icon="ep:search" class="mr-5px" /> 搜索</el-button>
         <el-button @click="resetQuery"><Icon icon="ep:refresh" class="mr-5px" /> 重置</el-button>
@@ -65,19 +56,19 @@
           type="primary"
           plain
           @click="openForm('create')"
-          v-hasPermi="['product:marketing:create']"
+          v-hasPermi="['trade:order-template:create']"
         >
           <Icon icon="ep:plus" class="mr-5px" /> 新增
         </el-button>
-        <!-- <el-button
+        <el-button
           type="success"
           plain
           @click="handleExport"
           :loading="exportLoading"
-          v-hasPermi="['product:marketing:export']"
+          v-hasPermi="['trade:order-template:export']"
         >
           <Icon icon="ep:download" class="mr-5px" /> 导出
-        </el-button> -->
+        </el-button>
       </el-form-item>
     </el-form>
   </ContentWrap>
@@ -85,37 +76,14 @@
   <!-- 列表 -->
   <ContentWrap>
     <el-table v-loading="loading" :data="list" :stripe="true" :show-overflow-tooltip="true">
-      <el-table-column label="Banner 编号" align="center" prop="id" />
-      <el-table-column label="Banner 标题" align="center" prop="title" />
-      <el-table-column label="图片" align="center" prop="picUrls" >
+      <el-table-column label="id" align="center" prop="id" />
+      <el-table-column label="模板名称" align="center" prop="templateName" />
+      <!-- <el-table-column label="模板值值" align="center" prop="templateValue" /> -->
+      <el-table-column label="是否置顶" align="center" prop="isTop" >
       <template #default="{ row }">
-          <div class="flex">
-            <template  v-for='(item,index) in coverArr(row.picUrls)' :key='index'>
-              <el-image
-              fit="cover"
-              :src="item"
-              class="flex-none w-50px h-50px ml-5 pointer"
-              @click="imagePreview(item)"
-            />
-            </template>
-           
-          </div>
+             {{ row.isTop==0?'未置顶':'置顶' }}
         </template>
       </el-table-column>
-      <el-table-column
-        label="开始时间"
-        align="center"
-        prop="beginTime"
-        :formatter="dateFormatter"
-        width="180px"
-      />
-      <el-table-column
-        label="结束时间"
-        align="center"
-        prop="endTime"
-        :formatter="dateFormatter"
-        width="180px"
-      />
       <el-table-column
         label="创建时间"
         align="center"
@@ -129,7 +97,7 @@
             link
             type="primary"
             @click="openForm('update', scope.row.id)"
-            v-hasPermi="['product:marketing:update']"
+            v-hasPermi="['trade:order-template:update']"
           >
             编辑
           </el-button>
@@ -137,7 +105,7 @@
             link
             type="danger"
             @click="handleDelete(scope.row.id)"
-            v-hasPermi="['product:marketing:delete']"
+            v-hasPermi="['trade:order-template:delete']"
           >
             删除
           </el-button>
@@ -154,42 +122,56 @@
   </ContentWrap>
 
   <!-- 表单弹窗：添加/修改 -->
-  <MarketingForm ref="formRef" @success="getList" />
+  <OrderTemplateForm ref="formRef" @success="getList" />
 </template>
 
 <script setup lang="ts">
 import { dateFormatter } from '@/utils/formatTime'
 import download from '@/utils/download'
-import { MarketingApi, MarketingVO } from '@/api/product/marketing'
-import MarketingForm from './MarketingForm.vue'
-import { createImageViewer } from '@/components/ImageViewer'
+import { OrderTemplateApi, OrderTemplateVO } from '@/api/trade/ordertemplate'
+import OrderTemplateForm from './OrderTemplateForm.vue'
 
-/** 营销图片管理 列表 */
-defineOptions({ name: 'ProductMarketing' })
+/** tb订单模板 列表 */
+defineOptions({ name: 'OrderTemplate' })
 
 const message = useMessage() // 消息弹窗
 const { t } = useI18n() // 国际化
 
 const loading = ref(true) // 列表的加载中
-const list = ref<MarketingVO[]>([]) // 列表的数据
+const list = ref<OrderTemplateVO[]>([]) // 列表的数据
 const total = ref(0) // 列表的总页数
 const queryParams = reactive({
   pageNo: 1,
   pageSize: 10,
-  id: undefined,
-  title: undefined,
-  beginTime: [],
-  endTime: [],
+  templateName: undefined,
+  templateValue: undefined,
+  isTop: undefined,
   createTime: []
 })
 const queryFormRef = ref() // 搜索的表单
 const exportLoading = ref(false) // 导出的加载中
-
+const topProps = {
+  children: 'children',
+  label: 'nickname',
+  value: 'id',
+  isLeaf: 'leaf',
+  emitPath: false // 用于 cascader 组件：在选中节点改变时，是否返回由该节点所在的各级菜单的值所组成的数组，若设置 false，则只返回该节点的值
+}
+const topType = [
+{
+  nickname: '置顶',
+    id: 1,
+  },
+  {
+    nickname: '未置顶',
+    id: 0,
+  }
+]
 /** 查询列表 */
 const getList = async () => {
   loading.value = true
   try {
-    const data = await MarketingApi.getMarketingPage(queryParams)
+    const data = await OrderTemplateApi.getOrderTemplatePage(queryParams)
     list.value = data.list
     total.value = data.total
   } finally {
@@ -221,7 +203,7 @@ const handleDelete = async (id: number) => {
     // 删除的二次确认
     await message.delConfirm()
     // 发起删除
-    await MarketingApi.deleteMarketing(id)
+    await OrderTemplateApi.deleteOrderTemplate(id)
     message.success(t('common.delSuccess'))
     // 刷新列表
     await getList()
@@ -235,30 +217,14 @@ const handleExport = async () => {
     await message.exportConfirm()
     // 发起导出
     exportLoading.value = true
-    const data = await MarketingApi.exportMarketing(queryParams)
-    download.excel(data, '营销图片管理.xls')
+    const data = await OrderTemplateApi.exportOrderTemplate(queryParams)
+    download.excel(data, 'tb订单模板.xls')
   } catch {
   } finally {
     exportLoading.value = false
   }
 }
-/** 商品图预览 */
-const imagePreview = (imgUrl: string) => {
-  createImageViewer({
-    urlList: [imgUrl]
-  })
-}
-/** 商品图预览 */
-const coverArr = (imgUrl) => {
-  let arr = []
-  if(imgUrl){
-    arr = imgUrl.split(',')
-  }
-  console.log('arra',arr,imgUrl);
-  
-  return arr
 
-}
 /** 初始化 **/
 onMounted(() => {
   getList()

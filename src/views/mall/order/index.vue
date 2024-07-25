@@ -45,8 +45,6 @@
           filterable
           placeholder="请选择订单来源"
       />
-      
-        
       </el-form-item>
       <!-- <el-form-item label="物流单号" prop="logisticsNo">
         <el-input
@@ -313,7 +311,7 @@
       <el-table-column align="center" label="业务员" min-width="100" prop="price">
         <template #default="{ row }">{{ salesmanName(row.salesman)}}</template>
       </el-table-column>
-      <el-table-column align="center" label="状态" min-width="100" prop="price">
+      <el-table-column align="center" label="订单状态" min-width="100" prop="price">
         <template #default="{ row }">
           <el-tag type="primary" v-if='row.status == 1'>{{ statusName(row.status)}}</el-tag>
     <el-tag type="success" v-if='row.status == 2 || row.status == 3'>{{ statusName(row.status)}}</el-tag>
@@ -325,6 +323,7 @@
       </el-table-column>
       <el-table-column align="center" fixed="right" label="操作" min-width="200">
         <template #default="scope">
+          
           <el-button
             link
             type="success"
@@ -398,6 +397,14 @@
           </el-button>
           <el-button
             link
+            type="primary"
+            @click="openInfo(scope.row.id)"
+            v-hasPermi="['mall:order:update']"
+          >
+            详情
+          </el-button>
+          <el-button
+            link
             type="danger"
             @click="handleDelete(scope.row.id)"
             v-hasPermi="['mall:order:delete']"
@@ -468,6 +475,9 @@
 
   <!-- 表单弹窗：添加/修改 -->
   <OrderForm ref="formRef" @success="getList" />
+  <!-- 详情 -->
+  <OrderInfo ref="infoRef"  />
+
    <!-- 导出 -->
   <ExportOrder ref="exportOrderRef" @success="handleExportSend" :list='templateListRef'  />
   <!-- 导入 -->
@@ -490,6 +500,7 @@ import { createImageViewer } from '@/components/ImageViewer'
 import * as ProductSpuApi from '@/api/mall/product/spu'
 import { formatDate } from '@/utils/formatTime'
 import ImportForm from './importForm.vue'
+import OrderInfo from './orderInfo.vue'
 import Logistics from './logistics.vue'
 
 
@@ -582,6 +593,8 @@ const dw = [
 const queryFormRef = ref() // 搜索的表单
 const exportLoading = ref(false) // 导出的加载中
 const tabType = 99
+
+
 /** 查询列表 */
 const getList = async () => {
   loading.value = true
@@ -743,6 +756,11 @@ const openForm = (type: string, id?: number) => {
   formRef.value.open(type, id)
 }
 
+const infoRef = ref()
+const openInfo = (id?: number) => {
+  infoRef.value.open(id)
+}
+
 const onInvalid = async(id)=>{
   try {
     // (0待审核、1待发货、2已发货、3已签收、4未签收、5无效订单),示例值(1)
@@ -843,11 +861,12 @@ const handleExportSend = async (templateId) => {
 }
 const templateListRef = ref([])
 /** 初始化 **/
-onMounted(() => {
+onMounted(async() => {
     OrderTemplateApi.getOrderTemplatePage({pageNo:1,pageSize:99}).then(e=>{
       templateListRef.value = e.list
     })
   getList()
+   
 })
 </script>
 <style lang="scss" scoped>

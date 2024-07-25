@@ -1,298 +1,241 @@
 <template>
-  <div>
-    <el-card shadow="never">
-      <el-skeleton :loading="loading" animated>
-        <el-row :gutter="16" justify="space-between">
-          <el-col :xl="12" :lg="12" :md="12" :sm="24" :xs="24">
-            <div class="flex items-center">
-              <el-avatar :src="avatar" :size="70" class="mr-16px">
-                <img src="@/assets/imgs/avatar.gif" alt="" />
-              </el-avatar>
-              <div>
-                <div class="text-20px">
-                  {{ t('workplace.welcome') }}  {{ t('workplace.happyDay') }}
-                </div>
-                <div class="mt-10px text-14px text-gray-500">
-                  {{ t('workplace.toady') }}，20℃ - 32℃！
-                </div>
-              </div>
-            </div>
-          </el-col>
-          <el-col :xl="12" :lg="12" :md="12" :sm="24" :xs="24">
-            <div class="h-70px flex items-center justify-end lt-sm:mt-10px">
-              <div class="px-8px text-right">
-                <div class="mb-16px text-14px text-gray-400">{{ t('workplace.project') }}</div>
-                <CountTo
-                  class="text-20px"
-                  :start-val="0"
-                  :end-val="totalSate.project"
-                  :duration="2600"
-                />
-              </div>
-              <el-divider direction="vertical" />
-              <div class="px-8px text-right">
-                <div class="mb-16px text-14px text-gray-400">{{ t('workplace.toDo') }}</div>
-                <CountTo
-                  class="text-20px"
-                  :start-val="0"
-                  :end-val="totalSate.todo"
-                  :duration="2600"
-                />
-              </div>
-              <el-divider direction="vertical" border-style="dashed" />
-              <div class="px-8px text-right">
-                <div class="mb-16px text-14px text-gray-400">{{ t('workplace.access') }}</div>
-                <CountTo
-                  class="text-20px"
-                  :start-val="0"
-                  :end-val="totalSate.access"
-                  :duration="2600"
-                />
-              </div>
-            </div>
-          </el-col>
-        </el-row>
-      </el-skeleton>
-    </el-card>
+
+  <div class="flex flex-col">
+    <el-row :gutter="16" class="summary">
+      <el-col :sm="6" :xs="12">
+        <TradeStatisticValue
+          tooltip="昨日数据"
+          title="昨日数据"
+          :value="summary?.yesterdayData?.price || 0"
+          :type='true'
+          :percent="summary?.yesterdayData?.allPrice || 0"
+        />
+      </el-col>
+      <el-col :sm="6" :xs="12">
+        <TradeStatisticValue
+          tooltip="今日数据"
+          title="今日数据"
+          :value="summary?.todayData?.price || 0"
+          :percent="summary?.todayData?.allPrice || 0"
+        />
+      </el-col>
+      <el-col :sm="6" :xs="12">
+        <TradeStatisticValue
+          tooltip="本周数据"
+          title="本周数据"
+          prefix="￥"
+          :decimals="2"
+          :value="summary?.weekData?.price || 0"
+          :type='true'
+          :percent="summary?.weekData?.allPrice || 0"
+        />
+      </el-col>
+      <el-col :sm="6" :xs="12">
+        <TradeStatisticValue
+          tooltip="本月数据"
+          title="本月数据"
+          prefix="￥"
+          ::decimals="2"
+          :value="summary?.monthData?.price || 0"
+          :percent="summary?.monthData?.allPrice || 0"
+        />
+      </el-col>
+    </el-row>
+    <el-row :gutter="16" class="summary">
+      <el-col :sm="6" :xs="12">
+        <TradeStatisticValueT
+          tooltip="昨日数据"
+          title="昨日数据"
+          :value="jiaoyi?.yesterdayData?.effectiveCount || 0"
+          :type='true'
+          :percent="jiaoyi?.yesterdayData?.allCount || 0"
+        />
+      </el-col>
+      <el-col :sm="6" :xs="12">
+        <TradeStatisticValueT
+          tooltip="今日数据"
+          title="今日数据"
+          :value="jiaoyi?.todayData?.effectiveCount || 0"
+          :percent="jiaoyi?.todayData?.allCount || 0"
+        />
+      </el-col>
+      <el-col :sm="6" :xs="12">
+        <TradeStatisticValueT
+          tooltip="本周数据"
+          title="本周数据"
+          prefix="￥"
+          :decimals="2"
+          :value="jiaoyi?.weekData?.effectiveCount || 0"
+          :type='true'
+          :percent="jiaoyi?.weekData?.allCount || 0"
+        />
+      </el-col>
+      <el-col :sm="6" :xs="12">
+        <TradeStatisticValueT
+          tooltip="本月数据"
+          title="本月数据"
+          prefix="￥"
+          ::decimals="2"
+          :value="jiaoyi?.monthData?.price || 0"
+          :percent="jiaoyi?.monthData?.allCount || 0"
+        />
+      </el-col>
+    </el-row>
   </div>
-
-  <el-row class="mt-8px" :gutter="8" justify="space-between">
-    <el-col :xl="16" :lg="16" :md="24" :sm="24" :xs="24" class="mb-8px">
-      <el-card shadow="never">
-        <template #header>
-          <div class="h-3 flex justify-between">
-            <span>{{ t('workplace.project') }}</span>
-            <el-link
-              type="primary"
-              :underline="false"
-              href="https://github.com/yudaocode"
-              target="_blank"
-            >
-              {{ t('action.more') }}
-            </el-link>
-          </div>
-        </template>
-        <el-skeleton :loading="loading" animated>
-          <el-row>
-            <el-col
-              v-for="(item, index) in projects"
-              :key="`card-${index}`"
-              :xl="8"
-              :lg="8"
-              :md="8"
-              :sm="24"
-              :xs="24"
-            >
-              <el-card shadow="hover" class="mr-5px mt-5px">
-                <div class="flex items-center">
-                  <Icon :icon="item.icon" :size="25" class="mr-8px" />
-                  <span class="text-16px">{{ item.name }}</span>
-                </div>
-                <div class="mt-12px text-9px text-gray-400">{{ t(item.message) }}</div>
-                <div class="mt-12px flex justify-between text-12px text-gray-400">
-                  <span>{{ item.personal }}</span>
-                  <span>{{ formatTime(item.time, 'yyyy-MM-dd') }}</span>
-                </div>
-              </el-card>
-            </el-col>
-          </el-row>
-        </el-skeleton>
-      </el-card>
-
-      <el-card shadow="never" class="mt-8px">
-        <el-skeleton :loading="loading" animated>
-          <el-row :gutter="20" justify="space-between">
-            <el-col :xl="10" :lg="10" :md="24" :sm="24" :xs="24">
-              <el-card shadow="hover" class="mb-8px">
-                <el-skeleton :loading="loading" animated>
-                  <Echart :options="pieOptionsData" :height="280" />
-                </el-skeleton>
-              </el-card>
-            </el-col>
-            <el-col :xl="14" :lg="14" :md="24" :sm="24" :xs="24">
-              <el-card shadow="hover" class="mb-8px">
-                <el-skeleton :loading="loading" animated>
-                  <Echart :options="barOptionsData" :height="280" />
-                </el-skeleton>
-              </el-card>
-            </el-col>
-          </el-row>
-        </el-skeleton>
-      </el-card>
-    </el-col>
-    <el-col :xl="8" :lg="8" :md="24" :sm="24" :xs="24" class="mb-8px">
-      <el-card shadow="never">
-        <template #header>
-          <div class="h-3 flex justify-between">
-            <span>{{ t('workplace.shortcutOperation') }}</span>
-          </div>
-        </template>
-        <el-skeleton :loading="loading" animated>
-          <el-row>
-            <el-col v-for="item in shortcut" :key="`team-${item.name}`" :span="8" class="mb-8px">
-              <div class="flex items-center">
-                <Icon :icon="item.icon" class="mr-8px" />
-                <el-link type="default" :underline="false" @click="setWatermark(item.name)">
-                  {{ item.name }}
-                </el-link>
-              </div>
-            </el-col>
-          </el-row>
-        </el-skeleton>
-      </el-card>
-      <el-card shadow="never" class="mt-8px">
-        <template #header>
-          <div class="h-3 flex justify-between">
-            <span>{{ t('workplace.notice') }}</span>
-            <el-link type="primary" :underline="false">{{ t('action.more') }}</el-link>
-          </div>
-        </template>
-        <el-skeleton :loading="loading" animated>
-          <div v-for="(item, index) in notice" :key="`dynamics-${index}`">
-            <div class="flex items-center">
-              <el-avatar :src="avatar" :size="35" class="mr-16px">
-                <img src="@/assets/imgs/avatar.gif" alt="" />
-              </el-avatar>
-              <div>
-                <div class="text-14px">
-                  <Highlight :keys="item.keys.map((v) => t(v))">
-                    {{ item.type }} : {{ item.title }}
-                  </Highlight>
-                </div>
-                <div class="mt-16px text-12px text-gray-400">
-                  {{ formatTime(item.date, 'yyyy-MM-dd') }}
-                </div>
-              </div>
-            </div>
-            <el-divider />
-          </div>
-        </el-skeleton>
-      </el-card>
-    </el-col>
-  </el-row>
 </template>
 <script lang="ts" setup>
-import { set } from 'lodash-es'
+import * as TradeStatisticsApi from '@/api/mall/statistics/trade'
+import TradeStatisticValue from './components/TradeStatisticValue.vue'
+import TradeStatisticValueT from './components/TradeStatisticValueT.vue'
+
+import SummaryCard from '@/components/SummaryCard/index.vue'
 import { EChartsOption } from 'echarts'
-import { formatTime } from '@/utils'
+import { DataComparisonRespVO } from '@/api/mall/statistics/common'
+import { TradeSummaryRespVO, TradeTrendSummaryRespVO } from '@/api/mall/statistics/trade'
+import { calculateRelativeRate, fenToYuan } from '@/utils'
+import download from '@/utils/download'
+import { CardTitle } from '@/components/Card'
+import * as DateUtil from '@/utils/formatTime'
+import dayjs from 'dayjs'
 
-import { useUserStore } from '@/store/modules/user'
-import { useWatermark } from '@/hooks/web/useWatermark'
-import type { WorkplaceTotal, Project, Notice, Shortcut } from './types'
-import { pieOptions, barOptions } from './echarts-data'
+/** 交易统计 */
+defineOptions({ name: 'TradeStatistics' })
 
-defineOptions({ name: 'Home' })
+const message = useMessage() // 消息弹窗
 
-const { t } = useI18n()
-const userStore = useUserStore()
-const { setWatermark } = useWatermark()
-const loading = ref(true)
-const avatar = userStore.getUser.avatar
-const username = userStore.getUser.nickname
-const pieOptionsData = reactive<EChartsOption>(pieOptions) as EChartsOption
-// 获取统计数
-let totalSate = reactive<WorkplaceTotal>({
-  project: 0,
-  access: 0,
-  todo: 0
-})
+const trendLoading = ref(true) // 交易状态加载中
+const exportLoading = ref(false) // 导出的加载中
+const summary = ref<DataComparisonRespVO<TradeSummaryRespVO>>() // 交易统计数据
+const jiaoyi = ref({})
+const trendSummary = ref<DataComparisonRespVO<TradeTrendSummaryRespVO>>() // 交易状况统计数据
+const shortcutDateRangePicker = ref()
 
-const getCount = async () => {
-  const data = {
-    project: 40,
-    access: 2340,
-    todo: 10
+/** 折线图配置 */
+const lineChartOptions = reactive<EChartsOption>({
+  dataset: {
+    dimensions: ['date', 'turnoverPrice', 'orderPayPrice', 'rechargePrice', 'expensePrice'],
+    source: []
+  },
+  grid: {
+    left: 20,
+    right: 20,
+    bottom: 20,
+    top: 80,
+    containLabel: true
+  },
+  legend: {
+    top: 50
+  },
+  series: [
+    { name: '营业额', type: 'line', smooth: true },
+    { name: '商品支付金额', type: 'line', smooth: true },
+    { name: '充值金额', type: 'line', smooth: true },
+    { name: '支出金额', type: 'line', smooth: true }
+  ],
+  toolbox: {
+    feature: {
+      // 数据区域缩放
+      dataZoom: {
+        yAxisIndex: false // Y轴不缩放
+      },
+      brush: {
+        type: ['lineX', 'clear'] // 区域缩放按钮、还原按钮
+      },
+      saveAsImage: { show: true, name: '交易状况' } // 保存为图片
+    }
+  },
+  tooltip: {
+    trigger: 'axis',
+    axisPointer: {
+      type: 'cross'
+    },
+    padding: [5, 10]
+  },
+  xAxis: {
+    type: 'category',
+    boundaryGap: false,
+    axisTick: {
+      show: false
+    }
+  },
+  yAxis: {
+    axisTick: {
+      show: false
+    }
   }
-  totalSate = Object.assign(totalSate, data)
+}) as EChartsOption
+
+/** 处理交易状况查询 */
+const getTradeTrendData = async () => {
+  trendLoading.value = true
+  // 1. 处理时间: 开始与截止在同一天的, 折线图出不来, 需要延长一天
+  const times = shortcutDateRangePicker.value.times
+  if (DateUtil.isSameDay(times[0], times[1])) {
+    // 前天
+    times[0] = DateUtil.formatDate(dayjs(times[0]).subtract(1, 'd'))
+  }
+  // 查询数据
+  await Promise.all([getTradeStatisticsAnalyse(), getTradeStatisticsList()])
+  trendLoading.value = false
 }
 
-// 获取项目数
-let projects = reactive<Project[]>([])
-const getProject = async () => {
-  const data = [
+/** 查询交易统计 */
+const getTradeStatisticsSummary = async () => {
+  summary.value = await TradeStatisticsApi.getTbSummaryPrice()
+  jiaoyi.value = await TradeStatisticsApi.getJySum()
 
-  ]
-  projects = Object.assign(projects, data)
+  console.log(jiaoyi.value)
 }
 
-// 获取通知公告
-let notice = reactive<Notice[]>([])
-const getNotice = async () => {
-  const data = [
-
-  ]
-  notice = Object.assign(notice, data)
+/** 查询交易状况数据统计 */
+const getTradeStatisticsAnalyse = async () => {
+  const times = shortcutDateRangePicker.value.times
+  trendSummary.value = await TradeStatisticsApi.getTradeStatisticsAnalyse({ times })
 }
 
-// 获取快捷入口
-let shortcut = reactive<Shortcut[]>([])
-
-const getShortcut = async () => {
-  const data = [
-
-  ]
-  shortcut = Object.assign(shortcut, data)
+/** 查询交易状况数据列表 */
+const getTradeStatisticsList = async () => {
+  // 查询数据
+  const times = shortcutDateRangePicker.value.times
+  const list = await TradeStatisticsApi.getTradeStatisticsList({ times })
+  // 处理数据
+  for (let item of list) {
+    item.turnoverPrice = fenToYuan(item.turnoverPrice)
+    item.orderPayPrice = fenToYuan(item.orderPayPrice)
+    item.rechargePrice = fenToYuan(item.rechargePrice)
+    item.expensePrice = fenToYuan(item.expensePrice)
+  }
+  // 更新 Echarts 数据
+  if (lineChartOptions.dataset && lineChartOptions.dataset['source']) {
+    lineChartOptions.dataset['source'] = list
+  }
 }
 
-// 用户来源
-const getUserAccessSource = async () => {
-  const data = [
-    { value: 335, name: 'analysis.directAccess' },
-    { value: 310, name: 'analysis.mailMarketing' },
-    { value: 234, name: 'analysis.allianceAdvertising' },
-    { value: 135, name: 'analysis.videoAdvertising' },
-    { value: 1548, name: 'analysis.searchEngines' }
-  ]
-  set(
-    pieOptionsData,
-    'legend.data',
-    data.map((v) => t(v.name))
-  )
-  pieOptionsData!.series![0].data = data.map((v) => {
-    return {
-      name: t(v.name),
-      value: v.value
-    }
-  })
-}
-const barOptionsData = reactive<EChartsOption>(barOptions) as EChartsOption
-
-// 周活跃量
-const getWeeklyUserActivity = async () => {
-  const data = [
-    { value: 13253, name: 'analysis.monday' },
-    { value: 34235, name: 'analysis.tuesday' },
-    { value: 26321, name: 'analysis.wednesday' },
-    { value: 12340, name: 'analysis.thursday' },
-    { value: 24643, name: 'analysis.friday' },
-    { value: 1322, name: 'analysis.saturday' },
-    { value: 1324, name: 'analysis.sunday' }
-  ]
-  set(
-    barOptionsData,
-    'xAxis.data',
-    data.map((v) => t(v.name))
-  )
-  set(barOptionsData, 'series', [
-    {
-      name: t('analysis.activeQuantity'),
-      data: data.map((v) => v.value),
-      type: 'bar'
-    }
-  ])
+/** 导出按钮操作 */
+const handleExport = async () => {
+  try {
+    // 导出的二次确认
+    await message.exportConfirm()
+    // 发起导出
+    exportLoading.value = true
+    const times = shortcutDateRangePicker.value.times
+    const data = await TradeStatisticsApi.exportTradeStatisticsExcel({ times })
+    download.excel(data, '交易状况.xls')
+  } catch {
+  } finally {
+    exportLoading.value = false
+  }
 }
 
-const getAllApi = async () => {
-  await Promise.all([
-    getCount(),
-    getProject(),
-    getNotice(),
-    getShortcut(),
-    getUserAccessSource(),
-    getWeeklyUserActivity()
-  ])
-  loading.value = false
-}
-
-getAllApi()
+/** 初始化 **/
+onMounted(async () => {
+  await getTradeStatisticsSummary()
+})
 </script>
+<style lang="scss" scoped>
+.summary {
+  .el-col {
+    margin-bottom: 1rem;
+  }
+}
+</style>

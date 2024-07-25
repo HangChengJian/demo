@@ -55,7 +55,7 @@ export const OrderApi = {
 
   // 修改跨国订单
   updateOrder: async (data: OrderVO) => {
-    return await request.put({ url: `/mall/order/update`, data })
+    return await request.post({ url: `/trade/tb-order/updateOrder`, data })
   },
 
   // 删除跨国订单
@@ -84,5 +84,8 @@ export const OrderApi = {
   getLogistics: async (id) => {
     return await request.get({ url: `/trade/tb-order/getLogistics?id=` + id })
   },
-  
+  // 查询sku
+  getSku: async (id) => {
+    return await request.get({ url: `/product/spu/getSkuList?id=` + id })
+  },
 }

@@ -161,7 +161,6 @@ const getDetail = async () => {
       formLoading.value = false
 
       formData.value = res
-      console.log('编辑的数据',formData.value);
       
     } finally {
       formLoading.value = false
