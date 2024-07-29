@@ -10,7 +10,20 @@
       v-if="skuId"
     >
       <el-form-item :label="text + '名称(中文)'" prop="name">
-        <el-input v-model="formData.name" placeholder="请输入名称" />
+        <!-- <el-input v-model="formData.name" placeholder="请输入名称" /> -->
+            <el-select
+                        v-model="formData.name"
+                        placeholder="请选择规格"
+                        filterable
+                        ref="selectName"
+                        allow-create
+                        default-first-option
+                        @blur="nameBlur"
+                        @change="nameChange"
+                        @visible-change="visibleNameChange"
+                    >
+                        <el-option v-for="item in skuSelectList" :key="item.id" :label="item.name" :value="item.name"/>
+                    </el-select>
       </el-form-item>
       <el-form-item :label="text + '名称(英文)'" prop="nameUs" class="mt-4">
         <el-input v-model="formData.nameUs" placeholder="请输入名称" />
@@ -78,6 +91,28 @@ import * as PropertyApi from '@/api/mall/product/property'
 import { log } from 'console'
 
 defineOptions({ name: 'ProductPropertyForm' })
+const selectName = ref(null)
+const skuChilderId = ref(null)
+const test = ref([
+    {
+        id: 168,
+        name: "规格1",
+        nameArab: "3",
+        nameUs: "2"
+    },
+    {
+        id: 160,
+        name: "规格2",
+        nameArab: "搜狗9",
+        nameUs: "搜狗8"
+    },
+    {
+        id: 159,
+        name: "规格3",
+        nameArab: "搜狗4",
+        nameUs: "搜狗3"
+    }
+])
 const emit = defineEmits(['success']) // 定义 success 事件，用于操作成功后的回调
 const tapProps = {
   children: 'children',
@@ -137,10 +172,19 @@ watch(
     immediate: true
   }
 )
-
+const skuSelectList = ref([])
 /** 打开弹窗 */
 const open = async () => {
+  if(props.skuId){
+    const skuList = await PropertyApi.getPropertyValuePage({pageNo:1,pageSize:99,propertyId:props.skuId.id})
+    if(skuList.list){
+      skuSelectList.value = skuList.list
+    }else{
+      skuSelectList.value = []
+    }
+  }
   dialogVisible.value = true
+  skuChilderId.value = null
   resetForm()
 }
 defineExpose({ open }) // 提供 open 方法，用于打开弹窗
@@ -152,6 +196,32 @@ const gettap = async () => {
     const data = await PropertyApi.getPropertyPage({pageNo:1,pageSize:99})
     tanpList.value = data.list
   } finally {
+  }
+}
+const nameBlur = (e) => {
+  // console.log('isTapisTapisTapisTapisTap',e.target.value)
+  if(!e.target || !e.target.value) return
+  let isTap = skuSelectList.value.some(itme => {
+    return itme.name === e.target.value
+  })
+  if(isTap) return
+  formData.value.name = e.target.value
+  skuChilderId.value = null
+  // formData.value.nameUs = ''
+  // formData.value.nameArab = ''
+}
+const nameChange = (e)=>{
+  skuSelectList.value.forEach(item => {
+    if(item.name === e){
+      skuChilderId.value = item.id
+      formData.value.nameUs = item.nameUs
+      formData.value.nameArab = item.nameArab
+    }
+  })
+}
+const visibleNameChange = (e)=>{
+  if (!e && selectName.value) {
+     selectName.value.blur()
   }
 }
 /** 提交表单 */
@@ -168,6 +238,12 @@ const submitForm = async () => {
   delete data.tapId;
   //添加规格
   if (props.skuId) {
+    if(skuChilderId.value){
+      attributeList.value[props.skuId.index].values.push({ id:skuChilderId.value, ...data })
+      dialogVisible.value = false
+      formLoading.value = false
+      return
+    }
     try {
       const id = await PropertyApi.createPropertyValue({ propertyId: props.skuId.id, ...data })
       attributeList.value[props.skuId.index].values.push({ id, ...data })
@@ -201,14 +277,15 @@ const submitForm = async () => {
         attributeList.value.push({
               id: formData.value.tapId,
               ...tapData,
-              values: skuList.list.map(element => {
-                return{
-                  id:element.id,
-                  name:element.name,
-                  nameArab:element.nameArab,
-                  nameUs:element.nameUs,
-                }
-            })
+              values: [],
+            //   skuList: skuList.list.map(element => {
+            //     return{
+            //       id:element.id,
+            //       name:element.name,
+            //       nameArab:element.nameArab,
+            //       nameUs:element.nameUs,
+            //     }
+            // })
           })
       }
     }else{

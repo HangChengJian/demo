@@ -19,9 +19,9 @@
         :clearable="true"
         :show-word-limit="true"
         class="w-80!"
-        maxlength="64"
         placeholder="请输入商品中文名称"
         type="textarea"
+        maxlength="500"
       />
     </el-form-item>
     <el-form-item label="商品名称(英文)" prop="nameUs">
@@ -31,9 +31,10 @@
         :clearable="true"
         :show-word-limit="true"
         class="w-80!"
-        maxlength="64"
         placeholder="请输入商品英文名称"
         type="textarea"
+        maxlength="500"
+
       />
     </el-form-item>
     <el-form-item label="商品名称(阿语)" prop="nameArab">
@@ -43,9 +44,10 @@
         :clearable="true"
         :show-word-limit="true"
         class="w-80!"
-        maxlength="64"
         placeholder="请输入商品阿语名称"
         type="textarea"
+        maxlength="500"
+
       />
     </el-form-item>
     <el-form-item label="商品副标题(中文)" prop="introduction">
@@ -55,9 +57,10 @@
         :clearable="true"
         :show-word-limit="true"
         class="w-80!"
-        maxlength="64"
         placeholder="请输入商品中文副标题"
         type="textarea"
+        maxlength="500"
+
       />
     </el-form-item>
     <el-form-item label="商品副标题(英文)" prop="introductionUs">
@@ -67,9 +70,10 @@
         :clearable="true"
         :show-word-limit="true"
         class="w-80!"
-        maxlength="64"
         placeholder="请输入商品英文副标题"
         type="textarea"
+        maxlength="500"
+
       />
     </el-form-item>
     <el-form-item label="商品副标题(阿语)" prop="introductionArab">
@@ -79,9 +83,10 @@
         :clearable="true"
         :show-word-limit="true"
         class="w-80!"
-        maxlength="64"
         placeholder="请输入商品阿语副标题"
         type="textarea"
+        maxlength="500"
+
       />
     </el-form-item>
     <el-form-item label="商品分类" prop="categoryId">

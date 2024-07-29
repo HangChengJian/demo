@@ -150,8 +150,11 @@
                   </el-col>
                   <el-col :span="6">
                     <el-form-item label="推广链接:">
-                      <div class="pointer color-88 text-sl" @click="copy(row.promotionUrl)"  style="width: 100%;" v-for="(item, index) in row.procureUrls" :key="index">
+                      <!-- <div class="pointer color-88 text-sl" @click="copy(row.promotionUrl)"  style="width: 100%;" v-for="(item, index) in row.procureUrls" :key="index">
                         {{ item || '无'}}
+                        </div> -->
+                        <div class="pointer color-88 text-sl" @click="copy(row.promotionUrl)"  style="width: 100%;" >
+                        {{ row.promotionUrl || '无'}}
                         </div>
                     </el-form-item>
                   </el-col>

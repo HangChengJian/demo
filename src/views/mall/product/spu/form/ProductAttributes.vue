@@ -191,10 +191,13 @@ const handleInputConfirm = async (index: number, propertyId: number) => {
 // 添加规格
 const skuId = ref({})
 const addSku=(index,id)=>{
-  skuId.value = {
-    index,
-    id,
-  }
+  // skuId.value = {
+  //   index,
+  //   id,
+  // }
+  skuId.value.index = index
+  skuId.value.id = id
+  
   attributesAddFormRef.value.open()
   // console.log(attributeList.value[index]);
   // attributeList.value[index].values?.push({
@@ -207,7 +210,6 @@ const successFc = ()=>{
 
 }
 const updateDate = ()=>{
-  console.log('xxxx',attributeList.value);
   emit('update', attributeList.value)
 
 }

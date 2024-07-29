@@ -43,3 +43,6 @@ export const createFile = (data: any) => {
 export const updateFile = (data: any) => {
   return request.upload({ url: '/infra/file/upload', data })
 }
+export const updateVideoFile = (data: any) => {
+  return request.upload({ url: '/infra/file/uploadVideo', data })
+}

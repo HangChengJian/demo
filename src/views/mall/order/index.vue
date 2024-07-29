@@ -143,6 +143,28 @@
         >
           <Icon icon="ep:plus" class="mr-5px" /> 新增
         </el-button> -->
+       
+      
+        <el-button
+          type="success"
+          plain
+          @click="onPass"
+          :loading="exportLoading"
+          v-hasPermi="['mall:order:export']"
+          :disabled="tabType !== 0"
+        >
+          审核通过
+        </el-button>
+        <el-button
+          :disabled="tabType !== 0"
+          type="warning"
+          plain
+          @click="onInvalid"
+          :loading="exportLoading"
+          v-hasPermi="['mall:order:export']"
+        >
+          无效订单
+        </el-button>
         <el-button
           type="success"
           plain
@@ -175,7 +197,6 @@
         :name="item.type"
       />
     </el-tabs>
-
     <el-table v-loading="loading" :data="list" @selection-change="handleSelectionChange">
       <el-table-column type="expand">
         <template #default="{ row }">
@@ -185,8 +206,8 @@
                 <el-row>
                   <el-col :span="4">
                     <el-form-item label="订单内部编号:" label-width="108px">
-                      <div class="fx-ct pointer color-88 text-sl"  @click.stop="copy(row.no)" style="max-width: 500px;">
-                       {{ row.no }}
+                      <div class="fx-ct pointer color-88 text-sl"  @click.stop="copy(row.id)" style="max-width: 500px;">
+                       {{ row.id }}
                         <Icon icon="svg-icon:copy" class="ml-4px" :size="18" />
                         </div>
                     </el-form-item>
@@ -235,8 +256,8 @@
       <el-table-column label="订单号" min-width="140" prop="id" >
       <template #default="{ row }">
         <div class="flex ">
-          <div class="flex pointer color-88" @click="copy(row.id)">
-          {{ row.id }}
+          <div class="flex pointer color-88" @click="copy(row.no)">
+          {{ row.no }}
            <Icon icon="svg-icon:copy" class="ml-4px" :size="20" />
           </div>
         </div>
@@ -352,7 +373,7 @@
           >
             查看物流
           </el-button>
-          <el-button
+          <!-- <el-button
             link
             type="success"
             @click="onPass(scope.row.id)"
@@ -360,7 +381,7 @@
             v-if='scope.row.status == 0'
           >
             审核通过
-          </el-button>
+          </el-button> -->
           <el-button
             link
             type="primary"
@@ -379,14 +400,14 @@
           >
             设为待审核
           </el-button>
-          <el-button
+          <!-- <el-button
             link
             type="warning"
             @click="onInvalid(scope.row.id)"
             v-hasPermi="['mall:order:update']"
           >
             设为无效
-          </el-button>
+          </el-button> -->
           <el-button
             link
             type="primary"
@@ -592,7 +613,7 @@ const dw = [
 
 const queryFormRef = ref() // 搜索的表单
 const exportLoading = ref(false) // 导出的加载中
-const tabType = 99
+const tabType = ref(99)
 
 
 /** 查询列表 */
@@ -661,7 +682,6 @@ const goodsSku =(sku)=>{
 /** 切换 Tab */
 const handleTabClick = (tab) => {
   queryParams.status = tab.paneName===99?'':tab.paneName
-  console.log(tab)
   handleQuery()
 }
 /** 复制 **/
@@ -671,7 +691,6 @@ const copy = async (text: string) => {
     message.error(t('common.copyError'))
     return
   }
-  console.log(copy);
   
   await copy()
   if (unref(copied)) {
@@ -761,11 +780,14 @@ const openInfo = (id?: number) => {
   infoRef.value.open(id)
 }
 
-const onInvalid = async(id)=>{
+const onInvalid = async()=>{
+  let ids = multipleSelection.value.map(e=>e.id)
+  if(!ids.length) return message.warning('请选择订单')
   try {
     // (0待审核、1待发货、2已发货、3已签收、4未签收、5无效订单),示例值(1)
+       console.log(ids)
     await message.confirm('是否修改为无效订单？','提示')
-    await OrderApi.setUnSend({id:[id],status:5})
+    await OrderApi.setUnSend({id:ids,status:5})
     message.success('修改成功')
     // // 刷新列表
     await getList()
@@ -805,11 +827,13 @@ const onSignFor = async(id,type)=>{
     await getList()
   } catch {}
 }
-const onPass = async(id)=>{
+const onPass = async()=>{
+  let ids = multipleSelection.value.map(e=>e.id)
+  if(!ids.length) return message.warning('请选择订单')
   try {
     // (0待审核、1待发货、2已发货、3已签收、4未签收、5无效订单),示例值(1)
     await message.confirm('是否确认通过审核？','提示')
-    await OrderApi.setUnSend({id:[id],status:1})
+    await OrderApi.setUnSend({id:ids,status:1})
     message.success('审核成功')
     // // 刷新列表
     await getList()

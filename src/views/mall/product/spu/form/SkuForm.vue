@@ -192,8 +192,6 @@ const onChangeSpec = () => {
 
 // 添加属性
 const addSku=()=>{
-  console.log('attributesAddFormRef',attributesAddFormRef);
-  
   attributesAddFormRef.value.open()
 //  // 添加到属性列表
 //  propertyList.value.push({

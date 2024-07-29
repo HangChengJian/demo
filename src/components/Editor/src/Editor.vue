@@ -8,6 +8,7 @@ import { ElMessage } from 'element-plus'
 import { useLocaleStore } from '@/store/modules/locale'
 import { getAccessToken, getTenantId } from '@/utils/auth'
 import UserImportForm from './UserImportForm.vue'
+import UserImportVideo from './UserImportVideo.vue'
 
 defineOptions({ name: 'Editor' })
 
@@ -59,8 +60,12 @@ watch(
 const handleCreated = (editor: IDomEditor) => {
   editorRef.value = editor
 }
+const importVideoRef = ref(null as any)
+const handleImportVideo = () => {
+  importVideoRef.value.open()
+}
 /** 用户导入 */
-const importFormRef = ref()
+const importFormRef = ref(null as any)
 const handleImport = () => {
   importFormRef.value.open()
 }
@@ -157,6 +162,39 @@ const editorConfig = computed((): IEditorConfig => {
           customInsert(res: any, insertFn: InsertFnType) {
             insertFn(res.data, 'image', res.data)
           }
+        },
+        ['uploadVideo']:{
+          fieldName: "file",
+          server: import.meta.env.VITE_UPLOAD_VODEO_URL,
+            // 自定义增加 http  header
+          headers: {
+            Accept: '*',
+            Authorization: 'Bearer ' + getAccessToken(),
+            'tenant-id': getTenantId()
+          },
+          meta: {  },
+          customBrowseAndUpload(insertFn: InsertFnType) {   // TS 语法
+              handleImportVideo()
+          },
+            // 单个文件的最大体积限制，默认为 60M
+            maxFileSize: 60 * 1024 * 1024,
+            // 最多可上传几个文件，默认为 100
+            maxNumberOfFiles: 3,
+            // 选择文件时的类型限制，默认为 ['video/*'] 。如不想限制，则设置为 []
+            allowedFileTypes: ["video/*"],
+            // 跨域是否传递 cookie ，默认为 false
+            withCredentials: true,
+            // 超时时间，默认为 10 秒
+            timeout: 15 * 1000,
+            customInsert: (res, insertFn) => {
+              console.log('xxxxx',res);
+              // if (res.errno == -1) {
+              //   this.$message.error("上传失败!");
+              //   return;
+              // }
+              insertFn(res.data, "", "");
+              // this.$message.success("上传成功!");
+            },
         }
       },
       uploadImgShowBase64: true
@@ -204,6 +242,10 @@ const addImg = (arr)=>{
   let html = valueHtml.value.replace(/<p>/g,"").replace(/<\/p>/g,'')
   valueHtml.value = `<p>${html}${newHtml}</p>`
 }
+const addVideo = (url)=>{
+  let html = valueHtml.value
+  valueHtml.value = `${html}<div data-w-e-type="video" data-w-e-is-void> <video poster="" controls="true" width="auto" height="auto"><source src="${url}" type="video/mp4"/></video> </div><p><br></p>`
+}
 defineExpose({
   getEditorRef
 })
@@ -228,6 +270,8 @@ defineExpose({
     />
   </div>
   <UserImportForm ref="importFormRef" @success="addImg" />
+  <UserImportVideo ref="importVideoRef" @success="addVideo" />
+
 </template>
 
 <style src="@wangeditor/editor/dist/css/style.css"></style>
