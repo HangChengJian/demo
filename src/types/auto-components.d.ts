@@ -324,6 +324,7 @@ declare module 'vue' {
     'Echart.vue_vue_type_script_setup_true_langB4ldvwQ_.js': typeof import('./../../dist-prod/assets/Echart.vue_vue_type_script_setup_true_lang-B4ldvwQ_.js.gz')['default']
     Editor: typeof import('./../components/Editor/src/Editor.vue')['default']
     EditTableCEaKGz12: typeof import('./../../dist-prod/assets/EditTable-CEaKGz12.js')['default']
+    ElAlert: typeof import('element-plus/es')['ElAlert']
     ElAvatar: typeof import('element-plus/es')['ElAvatar']
     ElAvatarBOWBgrtT: typeof import('./../../dist-prod/assets/el-avatar-BOWBgrtT.css')['default']
     ElAvatarCiIqBqF_: typeof import('./../../dist-prod/assets/el-avatar-CiIqBqF_.js')['default']
