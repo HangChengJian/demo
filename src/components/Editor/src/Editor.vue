@@ -132,7 +132,7 @@ const editorConfig = computed((): IEditorConfig => {
           withCredentials: true,
 
           // 超时时间，默认为 10 秒
-          timeout: 5 * 1000, // 5 秒
+          timeout: 5 * 100000000, // 5 秒
 
           // form-data fieldName，后端接口参数名称，默认值wangeditor-uploaded-image
           fieldName: 'file',
@@ -185,7 +185,7 @@ const editorConfig = computed((): IEditorConfig => {
             // 跨域是否传递 cookie ，默认为 false
             withCredentials: true,
             // 超时时间，默认为 10 秒
-            timeout: 15 * 1000,
+            timeout: 15 * 1000000000,
             customInsert: (res, insertFn) => {
               console.log('xxxxx',res);
               // if (res.errno == -1) {

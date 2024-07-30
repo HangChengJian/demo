@@ -207,10 +207,8 @@ const addSku=(index,id)=>{
 }
 const successFc = ()=>{
   emit('success', attributeList.value)
-
 }
 const updateDate = ()=>{
   emit('update', attributeList.value)
-
 }
 </script>

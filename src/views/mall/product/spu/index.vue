@@ -34,7 +34,7 @@
         v-model="queryParams.salesman"
         :options="userList"
         :props="userProps"
-        class="w-1/1"
+        class="!w-240px"
           clearable
           filterable
           placeholder="请选择创建者"
@@ -65,7 +65,7 @@
           v-model="queryParams.categoryId"
           :options="categoryList"
           :props="defaultProps"
-          class="w-1/1"
+          class="!w-240px"
           clearable
           filterable
           placeholder="请选择商品分类"
@@ -559,7 +559,7 @@ const formatCategoryName = (categoryId: number) => {
 
 /** 激活时 */
 onActivated(() => {
-  getList()
+  // getList()
 })
 
 /** 初始化 **/
@@ -569,6 +569,7 @@ onMounted(async () => {
   // 获得分类树
   const data = await ProductCategoryApi.getCategoryList({})
   categoryList.value = handleTree(data, 'id', 'parentId')
+
 })
 
 /** 复制 **/

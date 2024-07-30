@@ -60,7 +60,7 @@
         >
           <Icon icon="ep:plus" class="mr-5px" /> 新增
         </el-button>
-        <el-button
+        <!-- <el-button
           type="success"
           plain
           @click="handleExport"
@@ -68,7 +68,7 @@
           v-hasPermi="['trade:order-template:export']"
         >
           <Icon icon="ep:download" class="mr-5px" /> 导出
-        </el-button>
+        </el-button> -->
       </el-form-item>
     </el-form>
   </ContentWrap>

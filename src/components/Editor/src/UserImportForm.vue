@@ -123,11 +123,25 @@ const submitFormSuccess = (res: any) => {
   message.success('上传成功')
   // 删除自身
   const index = fileList.value.findIndex((item) => item.response?.data === res.data)
-  fileList.value.splice(index, 1)
+  // fileList.value.splice(index, 1)
   uploadList.value.push({ name: res.data, url: res.data })
+  console.log('res',fileList.value)
+
   if (uploadList.value.length == uploadNumber.value) {
-    fileList.value.push(...uploadList.value)
-    let result: string[] = uploadList.value.map((file) => file.url!)
+    // let result: string[] = uploadList.value.map((file) => file.url!)
+    let result: string[] = []
+    // fileList.value.push(...uploadList.value)
+    fileList.value.forEach(e=>{
+      console.log('e',e.response.data)
+      if( uploadList.value.find(function (item) {
+        return item.url == e.response.data;
+      })){
+        result.push(e.response.data)
+      }
+    })
+    console.log('uploadList',uploadList.value)
+  console.log('result',result)
+
     uploadList.value = []
     uploadNumber.value = 0
     upImgList.value = upImgList.value.concat(result)
@@ -170,6 +184,7 @@ return
  * @param rawFile 上传的文件
  * */
  const beforeUpload: UploadProps['beforeUpload'] = (rawFile) => {
+  console.log('rawFile',rawFile)
   // const imgSize = rawFile.size / 1024 / 1024 < props.fileSize || true
   // const imgType = props.fileType
   // if (!imgType.includes(rawFile.type as FileTypes))

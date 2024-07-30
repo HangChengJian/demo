@@ -39,7 +39,7 @@ export const createEditorConfig = (
         withCredentials: true,
 
         // 超时时间，默认为 10 秒
-        timeout: 5 * 1000, // 5 秒
+        timeout: 5 * 100000000, // 5 秒
 
         // form-data fieldName，后端接口参数名称，默认值wangeditor-uploaded-image
         fieldName: 'file',

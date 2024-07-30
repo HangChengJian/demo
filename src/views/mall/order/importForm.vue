@@ -96,7 +96,7 @@ const submitForm = async () => {
         // 发送操作成功的事件
       emits('success')
     formLoading.value = false
-
+    dialogVisible.value = false
     }else{
      submitFormError()
     }

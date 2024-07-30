@@ -1,13 +1,18 @@
 <template>
   <ContentWrap v-loading="formLoading">
-    <el-tabs v-model="activeName">
+    <!-- <div  class="test">11</div> -->
+    <el-tabs v-model="activeName" v-if="true">
       <el-tab-pane label="基础设置" name="info">
-        <InfoForm
+        <div
+          style="height: calc(100vh - 250px);overflow-y: scroll;">
+          <InfoForm
           ref="infoRef"
           v-model:activeName="activeName"
           :is-detail="isDetail"
           :propFormData="formData"
         />
+        </div>
+       
       </el-tab-pane>
     
       <!-- <el-tab-pane label="物流设置" name="delivery">
@@ -27,20 +32,27 @@
         />
       </el-tab-pane>
       <el-tab-pane label="属性规格" name="sku">
+        <div
+        style="max-height: calc(100vh - 250px);overflow-y: scroll;">
         <SkuForm
           ref="skuRef"
           v-model:activeName="activeName"
           :is-detail="isDetail"
           :propFormData="formData"
         />
+      </div>
+
       </el-tab-pane>
       <el-tab-pane label="套餐设置" name="other">
+        <div
+          style="max-height: calc(100vh - 250px);overflow-y: scroll;">
         <OtherForm
           ref="otherRef"
           v-model:activeName="activeName"
           :is-detail="isDetail"
           :propFormData="formData"
         />
+      </div>
       </el-tab-pane>
     </el-tabs>
     <el-form>
@@ -65,7 +77,7 @@ import DeliveryForm from './DeliveryForm.vue'
 import { convertToInteger, floatToFixed2, formatToFraction } from '@/utils'
 import { log } from 'console'
 
-defineOptions({ name: 'ProductSpuForm' })
+defineOptions({ name: 'ProductSpuAdd' })
 
 const { t } = useI18n() // 国际化
 const message = useMessage() // 消息弹窗
@@ -230,8 +242,15 @@ const close = () => {
 }
 
 
+
 /** 初始化 */
 onMounted(async () => {
   await getDetail()
+  console.log(window.screen.height)
 })
 </script>
+<style>
+.test{
+  max-height:100% !important
+}
+</style>

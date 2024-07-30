@@ -13,12 +13,12 @@
         </el-col>
 
         <el-col :span="12">
-          <el-form-item label="订单号" prop="id">
+          <el-form-item label="内部编号" prop="id">
             <el-input v-model="formData.id" placeholder="" style="width: 90%" disabled />
           </el-form-item>
         </el-col>
         <el-col :span="12">
-          <el-form-item label="内部编号" prop="no">
+          <el-form-item label="订单号" prop="no">
             <el-input v-model="formData.no" placeholder="" style="width: 90%" disabled />
           </el-form-item>
         </el-col>
@@ -118,12 +118,12 @@
             <el-input v-model="formData.receiverLongitude" placeholder="请输入收件人纬度" style="width: 90%" />
           </el-form-item>
         </el-col>
-        <el-col :span="12">
+        <el-col :span="24">
           <el-form-item label="买家备注" prop="userRemark">
             <el-input v-model="formData.userRemark" placeholder="请输入买家备注" style="width: 90%" />
           </el-form-item>
         </el-col>
-        <el-col :span="12">
+        <el-col :span="24">
           <el-form-item label="内部备注" prop="remark">
             <el-input v-model="formData.remark" placeholder="请输入内部备注" style="width: 90%" />
           </el-form-item>
@@ -465,7 +465,7 @@ const open = async (type: string, id?: number) => {
 
       gjList.value.list.forEach(e=>{
         if(e.id == formData.value.regionId){
-          dw.value = e.countryCode
+          dw.value = e.currency
         }
       })
 

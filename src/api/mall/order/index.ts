@@ -88,4 +88,8 @@ export const OrderApi = {
   getSku: async (id) => {
     return await request.get({ url: `/product/spu/getSkuList?id=` + id })
   },
+    //打印面单
+    getWaybill: async (id) => {
+      return await request.get({ url: `/trade/tb-order/getWaybill?id=` + id })
+    },
 }

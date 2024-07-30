@@ -242,6 +242,7 @@ const submitForm = async () => {
       attributeList.value[props.skuId.index].values.push({ id:skuChilderId.value, ...data })
       dialogVisible.value = false
       formLoading.value = false
+      emit('success')
       return
     }
     try {
@@ -287,6 +288,7 @@ const submitForm = async () => {
             //     }
             // })
           })
+          
       }
     }else{
       const propertyId = await PropertyApi.createProperty(data)

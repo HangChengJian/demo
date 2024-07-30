@@ -40,7 +40,7 @@
         v-model="queryParams.origion"
         :options="origionType"
         :props="userProps"
-        class="w-1/1"
+        class="!w-240px"
           clearable
           filterable
           placeholder="请选择订单来源"
@@ -60,7 +60,7 @@
         v-model="queryParams.salesman"
         :options="userList"
         :props="userProps"
-        class="w-1/1"
+        class="!w-240px"
           clearable
           filterable
           placeholder="请选择业务员"
@@ -247,6 +247,20 @@
                   </el-col>
                 </el-row>
               </el-col>
+              <el-col :span="24">
+                <el-row>
+                  <el-col :span="24">
+                    <el-form-item label="采购链接:">
+                      <div class="pointer color-88 text-sl"  @click="onWebURl(row.productUrl)" style="width: 100%;">
+                        {{ row.productUrl}}
+                        <span  style="position: relative;top: 2px">
+                          <Icon icon="svg-icon:copy" class="ml-4px color-88" :size="18" @click.stop="copy(row.productUrl)"/>
+                        </span>
+                        </div>
+                    </el-form-item>
+                  </el-col>
+                </el-row>
+              </el-col>
             </el-row>
           </el-form>
         </template>
@@ -362,6 +376,15 @@
             v-if='scope.row.status == 2'
           >
             拒签
+          </el-button>
+          <el-button
+            link
+            type="success"
+            @click="onDymd(scope.row.id)"
+            v-hasPermi="['mall:order:update']"
+            v-if='scope.row.status == 2'
+          >
+          打印面单
           </el-button>
           <el-button
             link
@@ -594,8 +617,8 @@ const dw = [
     currency: "AED",
   },
   {
-    name:'沙特阿拉伯',
-    currency: "AED",
+    name:'科威特',
+    currency: "KWD",
   },
   {
     name:'卡塔尔',
@@ -745,6 +768,11 @@ const LogisticsRef = ref(null)
 const logisticsListRef = ref({
   trackingList: []
 })
+const onDymd = async(no)=>{
+  const data = await OrderApi.getWaybill(no)
+console.log(data)
+if(data.waybillUrl) onWebURl(data.waybillUrl)
+}
 const getLogistics = async(id)=>{
   const data = await OrderApi.getLogistics(id)
   console.log(data)

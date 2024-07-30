@@ -17,14 +17,14 @@
         <el-col :span="12">
           <el-form-item label="订单号" prop="">
             <div class='text-color'>
-                  {{ formData.id }}
+                  {{ formData.no }}
             </div>
           </el-form-item>
         </el-col>
         <el-col :span="12">
           <el-form-item label="内部编号" prop="">
             <div class='text-color'>
-                  {{ formData.no }}
+                  {{ formData.id }}
             </div>
           </el-form-item>
         </el-col>
@@ -76,6 +76,13 @@
           <el-form-item label="物流单号" prop="" >
             <div class='text-color'>
                   {{ formData.logisticsNo }}
+            </div>
+          </el-form-item>
+        </el-col>
+        <el-col :span="24" v-if='formData.logisticsWaybillUrl'>
+          <el-form-item label="面单地址" prop="" >
+            <div class='text-color'>
+                  {{ formData.logisticsWaybillUrl }}
             </div>
           </el-form-item>
         </el-col>
@@ -159,14 +166,14 @@
             </div>
           </el-form-item>
         </el-col>
-        <el-col :span="12">
+        <el-col :span="24">
           <el-form-item label="买家备注" prop="userRemark">
             <div class='text-color'>
                   {{ formData.userRemark }}
             </div>
           </el-form-item>
         </el-col>
-        <el-col :span="12">
+        <el-col :span="24">
           <el-form-item label="内部备注" prop="remark">
             <div class='text-color'>
                   {{ formData.remark }}
@@ -236,7 +243,12 @@
         </el-col>
     </el-form>
     </el-tab-pane>
-    <el-tab-pane label="订单日志" name="second"/>
+    <el-tab-pane label="订单日志" name="second">
+      <div v-for="(item, index) in formData.logs" :key="index" class="log-list">
+        <div style="font-weight: bold;">{{ item.content }}</div>
+        <div style="color: #999;">{{ formatDate(item.createTime)}}</div>
+      </div>
+   </el-tab-pane>
   </el-tabs>
     <template #footer>
       <el-button @click="dialogVisible = false" type="primary">关 闭</el-button>
@@ -358,7 +370,7 @@ const open = async (id?: number) => {
       // time.value = formatDate(formData.value.createTime)
       gjList.value.list.forEach(e=>{
         if(e.id == formData.value.regionId){
-          dw.value = e.countryCode
+          dw.value = e.currency
         }
       })
 
@@ -493,5 +505,14 @@ const addSku = ()=>{
 }
 .text-color{
   color: rgb(64, 158, 255);
+}
+.log-list{
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px solid #eee;
+  &:last-child{
+    border-bottom: none;
+  }
 }
 </style>

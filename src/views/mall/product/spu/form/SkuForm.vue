@@ -202,8 +202,6 @@ const addSku=()=>{
 }
 /** 调用 SkuList generateTableData 方法*/
 const generateSkus = (propertyList) => {
-  console.log('propertyListpropertyListpropertyListpropertyList',propertyList);
-  
   skuListRef.value.generateTableData(propertyList,false)
 }
 /** 调用 SkuList generateTableData 方法*/
