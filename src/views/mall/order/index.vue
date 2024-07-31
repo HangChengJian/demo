@@ -8,16 +8,16 @@
       :inline="true"
       label-width="108px"
     >
-      <el-form-item label="订单id" prop="id">
+      <el-form-item label="订单号" prop="no">
         <el-input
-          v-model="queryParams.id"
+          v-model="queryParams.no"
           placeholder="请输入订单id"
           clearable
           @keyup.enter="handleQuery"
           class="!w-240px"
         />
       </el-form-item>
-      <el-form-item label="订单内部编号" prop="no">
+      <!-- <el-form-item label="订单内部编号" prop="no">
         <el-input
           v-model="queryParams.no"
           placeholder="请输入订单内部编号"
@@ -25,7 +25,7 @@
           @keyup.enter="handleQuery"
           class="!w-240px"
         />
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item label="下单链接" prop="downUrl">
         <el-input
           v-model="queryParams.downUrl"
@@ -67,6 +67,18 @@
       />
        
       </el-form-item>
+      <el-form-item label="商品分类" prop="categoryId">
+        <el-cascader
+        v-model="queryParams.categoryId"
+       :options="categoryList"
+        :props="defaultProps"
+        class="!w-240px"
+          clearable
+          filterable
+          placeholder="请选择商品分类"
+      />
+       
+      </el-form-item>
       <el-form-item label="商家备注" prop="remark">
         <el-input
           v-model="queryParams.remark"
@@ -76,7 +88,7 @@
           class="!w-240px"
         />
       </el-form-item>
-      <el-form-item label="SPU编号" prop="spuId">
+      <!-- <el-form-item label="SPU编号" prop="spuId">
         <el-input
           v-model="queryParams.spuId"
           placeholder="请输入商品SPU编号"
@@ -84,7 +96,7 @@
           @keyup.enter="handleQuery"
           class="!w-240px"
         />
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item label="SPU名称" prop="spuName">
         <el-input
           v-model="queryParams.spuName"
@@ -204,14 +216,14 @@
             <el-row>
               <el-col :span="24">
                 <el-row>
-                  <el-col :span="4">
+                  <!-- <el-col :span="4">
                     <el-form-item label="订单内部编号:" label-width="108px">
                       <div class="fx-ct pointer color-88 text-sl"  @click.stop="copy(row.id)" style="max-width: 500px;">
                        {{ row.id }}
                         <Icon icon="svg-icon:copy" class="ml-4px" :size="18" />
                         </div>
                     </el-form-item>
-                  </el-col>
+                  </el-col> -->
                   <el-col :span="6">
                     <el-form-item label="下单链接:">
                       <div class="pointer color-88 text-sl"  @click="onWebURl(row.downUrl)" style="width: 100%;">
@@ -536,6 +548,8 @@ import { dateFormatter } from '@/utils/formatTime'
 import download from '@/utils/download'
 import { OrderApi, OrderVO } from '@/api/mall/order'
 import { OrderTemplateApi } from '@/api/trade/ordertemplate'
+import * as ProductCategoryApi from '@/api/mall/product/category'
+import { defaultProps, handleTree, treeToString } from '@/utils/tree'
 
 import OrderForm from './OrderForm.vue'
 import ExportOrder from './ExportOrder.vue'
@@ -571,6 +585,7 @@ const queryParams = reactive({
   spuName: undefined,
   skuId: undefined,
   receiverName: undefined,
+  categoryId:undefined,
   receiverMobile: undefined,
   status:undefined,
   createTime: []
@@ -911,6 +926,10 @@ const handleExportSend = async (templateId) => {
     exportLoading.value = false
   }
 }
+
+/** 获取分类的节点的完整结构 */
+const categoryList = ref() // 分类树
+
 const templateListRef = ref([])
 /** 初始化 **/
 onMounted(async() => {
@@ -918,7 +937,9 @@ onMounted(async() => {
       templateListRef.value = e.list
     })
   getList()
-   
+    // 获得分类树
+  const data = await ProductCategoryApi.getCategoryList({})
+  categoryList.value = handleTree(data, 'id', 'parentId')
 })
 </script>
 <style lang="scss" scoped>

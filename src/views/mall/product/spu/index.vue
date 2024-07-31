@@ -153,9 +153,11 @@
                       <!-- <div class="pointer color-88 text-sl" @click="copy(row.promotionUrl)"  style="width: 100%;" v-for="(item, index) in row.procureUrls" :key="index">
                         {{ item || '无'}}
                         </div> -->
-                        <div class="pointer color-88 text-sl" @click="copy(row.promotionUrl)"  style="width: 100%;" >
+                        <div class="pointer color-88 text-sl"   style="width: 90%;"  @click="onWebURl(row.downUrl)">
                         {{ row.promotionUrl || '无'}}
                         </div>
+                        <Icon icon="svg-icon:copy" class="ml-4px" :size="18" @click.stop="copy(row.promotionUrl)"/>
+
                     </el-form-item>
                   </el-col>
                   
@@ -388,6 +390,9 @@ const salesmanName = (id)=>{
   }else{
     return ''
   }
+}
+const onWebURl = (url)=>{
+  window.open(url,'_blank')
 }
 // tabs 数据
 const tabsData = ref([
