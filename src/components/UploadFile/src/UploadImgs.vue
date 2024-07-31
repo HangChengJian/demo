@@ -15,6 +15,7 @@
       :on-exceed="handleExceed"
       :on-success="uploadSuccess"
       list-type="picture-card"
+      ref="ImageChang"
     >
       <div class="upload-empty">
         <slot name="empty">
@@ -50,9 +51,11 @@
 import type { UploadFile, UploadProps, UploadUserFile } from 'element-plus'
 import { ElNotification } from 'element-plus'
 
+import Sortable from 'sortablejs';
 import { propTypes } from '@/utils/propTypes'
 import { useUpload } from '@/components/UploadFile/src/useUpload'
-
+import {  ref,onMounted  } from 'vue'
+const ImageChang = ref(null)
 defineOptions({ name: 'UploadImgs' })
 
 const message = useMessage() // 消息弹窗
@@ -186,6 +189,25 @@ const handlePictureCardPreview: UploadProps['onPreview'] = (uploadFile) => {
   viewImageUrl.value = uploadFile.url!
   imgViewVisible.value = true
 }
+
+ // 支持拖拽排序
+ const initDragSort=()=> {
+       const el = ImageChang.value.$el.querySelectorAll('.el-upload-list')[0];
+       console.log('ImageChang.value',ImageChang.value.$el.querySelectorAll('.el-upload-list')[0])
+       Sortable.create(el, {
+         onEnd: ({ oldIndex, newIndex }) => {
+           // 交换位置
+           const arr = fileList.value;
+           const page = arr[oldIndex];
+           arr.splice(oldIndex, 1);
+           arr.splice(newIndex, 0, page);
+         }
+       });
+}
+
+onMounted(() => {
+  initDragSort()
+})
 </script>
 
 <style lang="scss" scoped>

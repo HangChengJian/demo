@@ -101,6 +101,7 @@ const editorConfig = computed((): IEditorConfig => {
         ['uploadImage']: {
               // 自定义选择图片
           customBrowseAndUpload(insertFn: InsertFnType) {   // TS 语法
+            // console.log(insertFn)
           // customBrowseAndUpload(insertFn) {              // JS 语法
               // 自己选择文件
               // 自己上传文件，并得到图片 url alt href
@@ -226,19 +227,38 @@ const getEditorRef = async (): Promise<IDomEditor> => {
   await nextTick()
   return unref(editorRef.value) as IDomEditor
 }
+
 const addImg = (arr)=>{
   //  let test = {
   //       url: "https://digital-plane.oss-cn-hangzhou.aliyuncs.com/4db7929b2c219c7777326993c6acf8296fbd6597470de1fdddfa4c6666265102.jpg", // 图片 src ，必须
   //       alt: "yyy", // 图片描述文字，非必须
   //       href: "https://digital-plane.oss-cn-hangzhou.aliyuncs.com/4db7929b2c219c7777326993c6acf8296fbd6597470de1fdddfa4c6666265102.jpg" // 图片的链接，非必须
   //   }
-
- 
-  // console.log('添加',getEditorRef())
+  // <img src="" 
+  // alt="image"
+  //  data-href=""
+  //   style=""/>
+  // const editor = editorRef.value;
+  //     if (editor == null) return;
   let newHtml = ''
   arr.forEach(element => {
     newHtml+=`<img src=\"${element}\" alt=\"image\" data-href=\"${element}\" />`
   });
+  // let newHtml = ''
+  // arr.forEach(element => {
+  //   let html =`<img src=\"${element}\" alt=\"image\" data-href=\"${element}\" />`
+  //   nextTick(() => {
+  // editor.dangerouslyInsertHtml(html);
+    
+  // })
+
+  // });
+  // console.log('editor',newHtml);
+  // editor.dangerouslyInsertHtml(newHtml);
+
+  // console.log('valueHtml',valueHtml.value);
+
+  
   let html = valueHtml.value.replace(/<p>/g,"").replace(/<\/p>/g,'')
   valueHtml.value = `<p>${html}${newHtml}</p>`
 }
@@ -246,6 +266,7 @@ const addVideo = (url)=>{
   let html = valueHtml.value
   valueHtml.value = `${html}<div data-w-e-type="video" data-w-e-is-void> <video poster="" controls="true" width="auto" height="auto"><source src="${url}" type="video/mp4"/></video> </div><p><br></p>`
 }
+
 defineExpose({
   getEditorRef
 })
@@ -271,7 +292,6 @@ defineExpose({
   </div>
   <UserImportForm ref="importFormRef" @success="addImg" />
   <UserImportVideo ref="importVideoRef" @success="addVideo" />
-
 </template>
 
 <style src="@wangeditor/editor/dist/css/style.css"></style>
