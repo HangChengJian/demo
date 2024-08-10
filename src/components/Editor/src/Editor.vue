@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { PropType } from 'vue'
 import { Editor, Toolbar } from '@wangeditor/editor-for-vue'
-import { i18nChangeLanguage, IDomEditor, IEditorConfig } from '@wangeditor/editor'
+import { i18nChangeLanguage, IDomEditor, IEditorConfig,SlateTransforms  } from '@wangeditor/editor'
 import { propTypes } from '@/utils/propTypes'
 import { isNumber } from '@/utils/is'
 import { ElMessage } from 'element-plus'
@@ -238,21 +238,51 @@ const addImg = (arr)=>{
   // alt="image"
   //  data-href=""
   //   style=""/>
-  // const editor = editorRef.value;
-  //     if (editor == null) return;
-  let newHtml = ''
-  arr.forEach(element => {
-    newHtml+=`<img src=\"${element}\" alt=\"image\" data-href=\"${element}\" />`
-  });
+
+
+
   // let newHtml = ''
   // arr.forEach(element => {
-  //   let html =`<img src=\"${element}\" alt=\"image\" data-href=\"${element}\" />`
-  //   nextTick(() => {
-  // editor.dangerouslyInsertHtml(html);
-    
+  //   newHtml+=`<img src=\"${element}\" alt=\"image\" data-href=\"${element}\" />`
+  // });
+
+  const editor = editorRef.value;
+      if (editor == null) return;
+
+// let srcc = "https://digital-plane.oss-cn-hangzhou.aliyuncs.com/4db7929b2c219c7777326993c6acf8296fbd6597470de1fdddfa4c6666265102.jpg"; // 替换成你的图片URL
+
+// const node1 = { type: 'image',src:srcc,children: []}
+// const node2 = { type: 'paragraph', children: [{ text: '' }] }
+// const nodeList = [node1,node2]
+
+// console.log('nodeList',nodeList)
+
+let nodeListt = []
+  arr.forEach(element => {
+    // newHtml+=`<img src=\"${element}\" alt=\"image\" data-href=\"${element}\" />`
+    nodeListt.push({
+      type: 'image',
+      src:element,
+      children: []
+    })
+  });
+nodeListt.push({ type: 'paragraph', children: [{ text: '' }] })
+
+SlateTransforms.insertNodes(editor, nodeListt)
+
+return
+  
+  let newHtml = ''
+  arr.forEach(element => {
+    let html =`<p><img src=\"${element}\" alt=\"image\" data-href=\"${element}\" /></p>`
+    // nextTick(() => {
+      setTimeout(()=>{
+        editor.dangerouslyInsertHtml(html);
+      },2000)
   // })
 
-  // });
+  });
+
   // console.log('editor',newHtml);
   // editor.dangerouslyInsertHtml(newHtml);
 
@@ -263,8 +293,21 @@ const addImg = (arr)=>{
   valueHtml.value = `<p>${html}${newHtml}</p>`
 }
 const addVideo = (url)=>{
-  let html = valueHtml.value
-  valueHtml.value = `${html}<div data-w-e-type="video" data-w-e-is-void> <video poster="" controls="true" width="auto" height="auto"><source src="${url}" type="video/mp4"/></video> </div><p><br></p>`
+  // let html = valueHtml.value
+  // valueHtml.value = `${html}<div data-w-e-type="video" data-w-e-is-void> <video poster="" controls="true" width="auto" height="auto"><source src="${url}" type="video/mp4"/></video> </div><p><br></p>`
+
+  const editor = editorRef.value;
+  if (editor == null) return;
+  let nodeListt = []
+
+nodeListt.push({
+      type: 'video',
+      src:url,
+      children: []
+    })
+nodeListt.push({ type: 'paragraph', children: [{ text: '' }] })
+
+SlateTransforms.insertNodes(editor, nodeListt)
 }
 
 defineExpose({
