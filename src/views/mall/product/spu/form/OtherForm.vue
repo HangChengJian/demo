@@ -154,7 +154,12 @@ const addSku=()=>{
         discountPrice:''
       })
     })
-  propertyDate.value.thalis.push(obj)
+  if(!propertyDate.value.thalis){
+    propertyDate.value.thalis = [obj]
+
+  }else{
+    propertyDate.value.thalis.push(obj)
+  }
     
 }
 

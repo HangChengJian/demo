@@ -230,18 +230,18 @@
           </div>
         </template>
       </el-table-column>
-      <el-table-column label="活动封面" min-width="100">
+      <!-- <el-table-column label="活动封面" min-width="100">
         <template #default="{ row }">
             <el-image
               fit="cover"
-              :src="row.picUrl"
+              :src="row.marketingUrl"
               class="flex-none w-50px h-50px pointer"
               @click="imagePreview(row.marketingUrl)"
               v-if='row.marketingUrl'
             />
             <span v-else>无</span>
         </template>
-      </el-table-column>
+      </el-table-column> -->
       <el-table-column align="center" label="商品分类" min-width="160" prop="price">
         <template #default="{ row }">{{ formatCategoryName(row.categoryId) }}</template>
       </el-table-column>
