@@ -196,7 +196,7 @@ const submitForm = async () => {
     await unref(skuRef)?.validate()
     await unref(descriptionRef)?.validate()
     console.log(formData.value);
-
+    localStorage.setItem('whatsapp', formData.value.whatsapp);
 
     // await unref(deliveryRef)?.validate()
     // await unref(otherRef)?.validate()

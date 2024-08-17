@@ -81,6 +81,50 @@
         />
       </el-col>
     </el-row>
+    <el-row :gutter="16" class="summary">
+      <el-col :sm="6" :xs="12">
+        <TradeStatisticValueT
+          tooltip="昨日浏览"
+          title="昨日加购"
+          :value="liulan?.yesterdayData?.allBrowse || 0"
+          :type='false'
+          :percent="liulan?.yesterdayData?.allAddCard || 0"
+        />
+      </el-col>
+      <el-col :sm="6" :xs="12">
+        <TradeStatisticValueT
+          tooltip="今日浏览"
+          title="今日加购"
+          :type='false'
+
+          :value="liulan?.todayData?.allBrowse || 0"
+          :percent="liulan?.todayData?.allAddCard || 0"
+        />
+      </el-col>
+      <el-col :sm="6" :xs="12">
+        <TradeStatisticValueT
+          tooltip="本周浏览"
+          title="本周加购"
+          prefix="￥"
+          :decimals="2"
+          :value="liulan?.weekData?.allBrowse || 0"
+          :type='false'
+          :percent="liulan?.weekData?.allAddCard || 0"
+        />
+      </el-col>
+      <el-col :sm="6" :xs="12">
+        <TradeStatisticValueT
+          tooltip="本月浏览"
+          title="本月加购"
+          prefix="￥"
+          :type='false'
+
+          ::decimals="2"
+          :value="liulan?.monthData?.allBrowse || 0"
+          :percent="liulan?.monthData?.allAddCard || 0"
+        />
+      </el-col>
+    </el-row>
   </div>
 </template>
 <script lang="ts" setup>
@@ -107,6 +151,8 @@ const trendLoading = ref(true) // 交易状态加载中
 const exportLoading = ref(false) // 导出的加载中
 const summary = ref<DataComparisonRespVO<TradeSummaryRespVO>>() // 交易统计数据
 const jiaoyi = ref({})
+const liulan = ref({})
+
 const trendSummary = ref<DataComparisonRespVO<TradeTrendSummaryRespVO>>() // 交易状况统计数据
 const shortcutDateRangePicker = ref()
 
@@ -183,7 +229,7 @@ const getTradeTrendData = async () => {
 const getTradeStatisticsSummary = async () => {
   summary.value = await TradeStatisticsApi.getTbSummaryPrice()
   jiaoyi.value = await TradeStatisticsApi.getJySum()
-
+  liulan.value = await TradeStatisticsApi.getLlSum()
   console.log(jiaoyi.value)
 }
 

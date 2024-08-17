@@ -238,6 +238,9 @@ watch(
       return
     }
     copyValueToTarget(formData, data)
+    if(!formData.whatsapp && localStorage.getItem('whatsapp')){
+      formData.whatsapp = localStorage.getItem('whatsapp')
+    }
   },
   {
     immediate: true

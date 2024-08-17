@@ -76,6 +76,12 @@ export const getJySum = () => {
   })
 }
 
+export const getLlSum = () => {
+  return request.get({
+    url: '/trade/tb-order/tbSummaryBrowse'
+  })
+}
+
 // 获得交易状况统计
 export const getTradeStatisticsAnalyse = (params: TradeTrendReqVO) => {
   return request.get<DataComparisonRespVO<TradeTrendSummaryRespVO>>({

@@ -1,19 +1,31 @@
 <template>
-  <div class="flex flex-col gap-2 bg-[var(--el-bg-color-overlay)] p-6 bg1" >
-    <div class="flex items-center justify-between text-gray-500">
+  <div class="flex flex-col gap-2 bg-[var(--el-bg-color-overlay)] p-6 bg1" :class="{ 'bg2': !type }">
+    <div class="flex items-center justify-between text-gray-500" v-if="type">
       <span style="color: #fff;">{{ title }}</span>
-      <el-tooltip :content="tooltip" placement="top-start" v-if="tooltip">
+      <el-tooltip :content="tooltip" placement="top-start" v-if="tooltip ">
         <Icon icon="ep:warning" />
       </el-tooltip>
     </div>
-    <div class="bar" >
+    <div class="bar" v-if="type">
         <div class="bar_in" :style="{'width':calculatePercentage(value,percent)}"></div>
     </div>
-    <div style="width: 100%;display: flex;justify-content: space-between;">
+
+    <div v-if="type">
+      <div style="width: 100%;display: flex;justify-content: space-between;">
       <span class="lable">有效订单:{{ value }}</span>
       <span class="lable">总订单:{{percent}}</span>
-
     </div>
+    </div>
+   <div v-else>
+    <div style="width: 100%;display: flex;justify-content: space-between;">
+      <span class="lable">{{tooltip}}</span>
+      <span class="lable">{{value}}</span>
+    </div>
+    <div style="width: 100%;display: flex;justify-content: space-between;padding-top: 10px;">
+      <span class="lable">{{title}}</span>
+      <span class="lable">{{percent}}</span>
+    </div>
+   </div>
     <!-- <div class=" text-3xl" style="align-items: center;display: flex;">
       <span class="lable">客单价:</span>
       <span class="sum">{{ value.toFixed(0) }}</span>
@@ -40,7 +52,7 @@ defineProps({
   title: propTypes.string.def(''),
   prefix: propTypes.string.def(''),
   value: propTypes.number.def(0),
-  type: propTypes.bool.def(false),
+  type: propTypes.bool.def(true),
   decimals: propTypes.number.def(0),
   percent: propTypes.number.def(0)
 })
@@ -52,6 +64,19 @@ const calculatePercentage=(numerator, denominator)=> {
 }
 </script>
 <style scoped>
+.bg2{
+  border-radius: 10px;
+  position: relative;
+  border-radius: 10px;
+  background-image: linear-gradient(to top, #ff7e5f 0%, #feb47b 100%) !important;
+  .bg-img{
+    position: absolute;
+    right: 0;
+    width: 150px;
+    height: 100x;
+    z-index: 1;
+  }
+}
 .bg1{
   border-radius: 10px;
   position: relative;
