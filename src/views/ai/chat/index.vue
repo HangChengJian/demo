@@ -67,7 +67,6 @@
 </template>
 <script setup lang="ts">
 const conversationList = [
-const  conversationList = [
   {
     id: 1,
     title: '测试标题',
